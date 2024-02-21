@@ -1,0 +1,15 @@
+﻿  GameEngine.cpp
+C:\Users\752\source\repos\Project3\Project3\GameEngine.cpp(65,59): warning C4244: 'argument': conversion from 'unsigned int' to 'T', possible loss of data
+C:\Users\752\source\repos\Project3\Project3\GameEngine.cpp(65,59): warning C4244:         with
+C:\Users\752\source\repos\Project3\Project3\GameEngine.cpp(65,59): warning C4244:         [
+C:\Users\752\source\repos\Project3\Project3\GameEngine.cpp(65,59): warning C4244:             T=float
+C:\Users\752\source\repos\Project3\Project3\GameEngine.cpp(65,59): warning C4244:         ]
+C:\Users\752\source\repos\Project3\Project3\GameEngine.cpp(65,44): warning C4244: 'argument': conversion from 'unsigned int' to 'T', possible loss of data
+C:\Users\752\source\repos\Project3\Project3\GameEngine.cpp(65,44): warning C4244:         with
+C:\Users\752\source\repos\Project3\Project3\GameEngine.cpp(65,44): warning C4244:         [
+C:\Users\752\source\repos\Project3\Project3\GameEngine.cpp(65,44): warning C4244:             T=float
+C:\Users\752\source\repos\Project3\Project3\GameEngine.cpp(65,44): warning C4244:         ]
+C:\Users\752\source\repos\Project3\Project3\GameEngine.cpp(74,42): warning C4244: 'argument': conversion from 'unsigned int' to 'float', possible loss of data
+  Main.cpp
+  Generating Code...
+  Project3.vcxproj -> C:\Users\752\source\repos\Project3\x64\Debug\Project3.exe
