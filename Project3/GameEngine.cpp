@@ -1,13 +1,18 @@
+// GameEngine used to run most of the stuff happening! Also the graphics!
+
 #include "GameEngine.h"
 #include <iostream>
 
-GameEngine::GameEngine() : window(sf::VideoMode::getDesktopMode(), "SFML Application", sf::Style::Fullscreen) {
+GameEngine::GameEngine() : window(sf::VideoMode::getDesktopMode(), "SFML Application", sf::Style::Fullscreen),screenWidth(sf::VideoMode::getDesktopMode().width),screenHeight(sf::VideoMode::getDesktopMode().height) {
     window.setFramerateLimit(60);
+    logoVisible = true;
     loadContent();
     initializeUI();
 }
 
+
 void GameEngine::run() {
+    // This is the main function it operates the game by calling all otehr functions!
     while (window.isOpen()) {
         processEvents();
         update();
@@ -16,6 +21,7 @@ void GameEngine::run() {
 }
 
 void GameEngine::processEvents() {
+    // over all calls the exit button for now!
     sf::Event event;
     while (window.pollEvent(event)) {
         if (event.type == sf::Event::Closed)
@@ -25,7 +31,7 @@ void GameEngine::processEvents() {
             if (event.mouseButton.button == sf::Mouse::Left) {
                 sf::Vector2i clickPos = sf::Mouse::getPosition(window);
                 if (exitButton.getGlobalBounds().contains(window.mapPixelToCoords(clickPos))) {
-                    window.close(); // Close the program
+                    window.close();
                 }
             }
         }
@@ -33,43 +39,109 @@ void GameEngine::processEvents() {
 }
 
 void GameEngine::update() {
-    // Update game state
+    float deltaTime = clock.restart().asSeconds();
+    animateLogo(deltaTime);
 }
 
 void GameEngine::render() {
+    // Really simple it renders the elements!
     window.clear();
     window.draw(background);
-    window.draw(square);
+    if (logoVisible) {
+        window.draw(logo);
+    }
     window.draw(exitButton);
+
+    if (StudioTextPopped) { 
+        window.draw(StudioText);
+    }
+
     window.display();
 }
 
+
 void GameEngine::loadContent() {
-    // Load the textures for Backround!
-    if (!backgroundTexture.loadFromFile("Textures/Untitled.jpg")) {
+    // This is the main loading function here! (Only add elements and don't remove them!)
+    if (!backgroundTexture.loadFromFile("Textures/Background.jpg")) {
         std::cerr << "Could not load background texture" << std::endl;
     }
     background.setTexture(&backgroundTexture);
 
-    // Load the textures for Close button!
+    if (!logoTexture.loadFromFile("Textures/Logo.png")) {
+        std::cerr << "Could not load logo texture" << std::endl;
+    }
+    logo.setTexture(&logoTexture);
+
     if (!exitButtonTexture.loadFromFile("Textures/Close.png")) {
         std::cerr << "Could not load exit button texture" << std::endl;
     }
     exitButton.setTexture(&exitButtonTexture);
+
+    if (!soundBuffer.loadFromFile("Audio/IntroSound.mp3")) {
+        std::cerr << "Failed to load sound file" << std::endl;
+    }
+    else {
+        std::cout << "Sound file loaded successfully" << std::endl;
+    }
+    sound.setBuffer(soundBuffer);
+
+    if (!StudioTextTexture.loadFromFile("Textures/StudioText.png")) {
+        std::cerr << "Could not load StudioText texture" << std::endl;
+    }
+    StudioText.setTexture(&StudioTextTexture);
 }
 
 void GameEngine::initializeUI() {
+
+    // This over all sets the sizes of the elements also the possitions! (Really Don't touch here :D)
+
     sf::VideoMode desktop = sf::VideoMode::getDesktopMode();
 
-    // Setup backround!
     background.setSize(sf::Vector2f(desktop.width, desktop.height));
 
-    // Test it will be removed!
-    square.setSize(sf::Vector2f(200.f, 200.f));
-    square.setFillColor(sf::Color(0, 0, 139));
-    square.setPosition((desktop.width / 2) - (square.getSize().x / 2), (desktop.height / 2) - (square.getSize().y / 2));
+    logo.setSize(sf::Vector2f(200.f, 200.f));
+    logo.setPosition((screenWidth / 2) - (logo.getSize().x / 2), screenHeight - logo.getSize().y);
 
-    // Setup Close button!
     exitButton.setSize(sf::Vector2f(50.f, 50.f));
     exitButton.setPosition(desktop.width - 60, 10);
+
+    StudioText.setSize(sf::Vector2f(100.f, 100.f));
+    StudioText.setPosition(-100.f, -100.f);
+}
+
+void GameEngine::animateLogo(float deltaTime) {
+    // Play the introduction sound here! (Don't touch here :D)
+    static bool soundPlayed = false;
+    if (!soundPlayed) {
+        sound.play();
+        soundPlayed = true;
+    }
+
+    static float movementDuration = 0;
+    movementDuration += deltaTime;
+
+    // Easy to define and tweek the values for the introduction screen!
+    float logoToCenterDuration = 1.3f;
+    float postLogoDuration = 2.0f;
+
+    // The main logo should show here!
+    if (movementDuration <= logoToCenterDuration) {
+        float progress = movementDuration / logoToCenterDuration;
+        float middleYPosition = screenHeight / 2 - logo.getSize().y / 2;
+        float bottomYPosition = screenHeight - logo.getSize().y;
+        logo.setPosition(screenWidth / 2 - logo.getSize().x / 2, bottomYPosition + progress * (middleYPosition - bottomYPosition));
+    }
+
+    // The Studio Text should show here!
+    if (movementDuration > logoToCenterDuration && movementDuration <= postLogoDuration) {
+        if (!StudioTextPopped) {
+            StudioText.setSize(sf::Vector2f(300.f, 100.f));
+
+            float margin = 20.f;
+            float studioTextY = logo.getPosition().y + logo.getSize().y + margin;
+            StudioText.setPosition((screenWidth - StudioText.getSize().x) / 2, studioTextY);
+
+            StudioTextPopped = true;
+        }
+    }
 }

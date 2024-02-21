@@ -1,3 +1,6 @@
+// This is for the exit Button in case you wonder!
+
+
 #ifndef BUTTON_H
 #define BUTTON_H
 

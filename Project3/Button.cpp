@@ -1,3 +1,5 @@
+// This is only for the close button! (Don't touch)
+
 #include "Button.h"
 #include <iostream>
 
