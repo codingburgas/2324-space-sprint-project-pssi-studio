@@ -2,6 +2,7 @@
 #include <iostream>
 
 GameEngine::GameEngine() : window(sf::VideoMode::getDesktopMode(), "SFML Application", sf::Style::Fullscreen) {
+    window.setFramerateLimit(60);
     loadContent();
     initializeUI();
 }

@@ -1,0 +1,37 @@
+{
+  "Version": 1,
+  "WorkspaceRootPath": "C:\\Users\\752\\Documents\\GitHub\\2324-space-sprint-project-pssi-studio\\",
+  "Documents": [
+    {
+      "AbsoluteMoniker": "D:0:0:{DDB8FE40-47B5-4A60-8832-C9C91EE08BF8}|Project3\\Project3.vcxproj|C:\\Users\\752\\Documents\\GitHub\\2324-space-sprint-project-pssi-studio\\Project3\\GameEngine.cpp||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}",
+      "RelativeMoniker": "D:0:0:{DDB8FE40-47B5-4A60-8832-C9C91EE08BF8}|Project3\\Project3.vcxproj|solutionrelative:Project3\\GameEngine.cpp||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}"
+    }
+  ],
+  "DocumentGroupContainers": [
+    {
+      "Orientation": 0,
+      "VerticalTabListWidth": 256,
+      "DocumentGroups": [
+        {
+          "DockedWidth": 200,
+          "SelectedChildIndex": 0,
+          "Children": [
+            {
+              "$type": "Document",
+              "DocumentIndex": 0,
+              "Title": "GameEngine.cpp",
+              "DocumentMoniker": "C:\\Users\\752\\Documents\\GitHub\\2324-space-sprint-project-pssi-studio\\Project3\\GameEngine.cpp",
+              "RelativeDocumentMoniker": "Project3\\GameEngine.cpp",
+              "ToolTip": "C:\\Users\\752\\Documents\\GitHub\\2324-space-sprint-project-pssi-studio\\Project3\\GameEngine.cpp",
+              "RelativeToolTip": "Project3\\GameEngine.cpp",
+              "ViewState": "AQIAAAAAAAAAAAAAAAAAAAQAAAAhAAAA",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000677|",
+              "WhenOpened": "2024-02-21T17:33:58.71Z",
+              "EditorCaption": ""
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}
