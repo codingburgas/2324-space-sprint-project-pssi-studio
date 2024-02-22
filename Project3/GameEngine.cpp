@@ -41,6 +41,36 @@ void GameEngine::processEvents() {
 void GameEngine::update() {
     float deltaTime = clock.restart().asSeconds();
     animateLogo(deltaTime);
+    // Logo Animation
+    if (logoAnimationActive) {
+        logoAnimationTime += deltaTime;
+        float duration = 1.0f;
+        float progress = std::min(logoAnimationTime / duration, 1.0f);
+
+        logo.setPosition(
+            logoStartPosition.x + (logoEndPosition.x - logoStartPosition.x) * progress,
+            logoStartPosition.y + (logoEndPosition.y - logoStartPosition.y) * progress
+        );
+
+        if (progress >= 1.0f) logoAnimationActive = false;
+    }
+
+    // Play Button Animation
+    if (playButtonAnimationActive) {
+        playButtonAnimationTime += deltaTime;
+        float duration = 1.0f;
+        float progress = std::min(playButtonAnimationTime / duration, 1.0f);
+
+        playButton.setPosition(
+            playButtonStartPosition.x + (playButtonEndPosition.x - playButtonStartPosition.x) * progress,
+            playButtonStartPosition.y + (playButtonEndPosition.y - playButtonStartPosition.y) * progress
+        );
+
+        playButtonOpacity = 255 * progress;
+        playButton.setFillColor(sf::Color(255, 255, 255, static_cast<sf::Uint8>(playButtonOpacity)));
+
+        if (progress >= 1.0f) playButtonAnimationActive = false;
+    }
 }
 
 void GameEngine::render() {
@@ -52,8 +82,11 @@ void GameEngine::render() {
     }
     window.draw(exitButton);
 
-    if (StudioTextPopped) { 
+    if (StudioTextPopped) {
         window.draw(StudioText);
+    }
+    if (mainMenuActive) {
+        window.draw(playButton);
     }
 
     window.display();
@@ -89,6 +122,10 @@ void GameEngine::loadContent() {
         std::cerr << "Could not load StudioText texture" << std::endl;
     }
     StudioText.setTexture(&StudioTextTexture);
+    if (!playButtonTexture.loadFromFile("Textures/PlayButton.png")) {
+        std::cerr << "Could not load play button texture" << std::endl;
+    }
+    playButton.setTexture(&playButtonTexture);
 }
 
 void GameEngine::initializeUI() {
@@ -107,6 +144,11 @@ void GameEngine::initializeUI() {
 
     StudioText.setSize(sf::Vector2f(100.f, 100.f));
     StudioText.setPosition(-100.f, -100.f);
+
+    logoEndPosition = sf::Vector2f(screenWidth / 2 - logo.getSize().x / 2, screenHeight / 3);
+    playButton.setSize(sf::Vector2f(200.f, 100.f));
+    playButtonStartPosition = sf::Vector2f(screenWidth / 2 - playButton.getSize().x / 2, screenHeight + 20.f);
+    playButton.setFillColor(sf::Color(255, 255, 255, 0));
 }
 
 void GameEngine::animateLogo(float deltaTime) {
@@ -120,9 +162,10 @@ void GameEngine::animateLogo(float deltaTime) {
     static float movementDuration = 0;
     movementDuration += deltaTime;
 
-    // Easy to define and tweek the values for the introduction screen!
+    // Define and tweak the values for the introduction screen!
     float logoToCenterDuration = 1.3f;
     float postLogoDuration = 2.0f;
+    float cycleDuration = logoToCenterDuration + postLogoDuration + 2.0f;
 
     // The main logo should show here!
     if (movementDuration <= logoToCenterDuration) {
@@ -143,5 +186,19 @@ void GameEngine::animateLogo(float deltaTime) {
 
             StudioTextPopped = true;
         }
+    }
+
+    // This is for the PlayButton!
+    if (movementDuration > cycleDuration && !mainMenuActive) {
+        mainMenuActive = true;
+        logoAnimationActive = true;
+        StudioTextPopped = false;
+        logoStartPosition = logo.getPosition();
+        logoAnimationTime = 0.0f;
+
+        playButtonAnimationActive = true;
+        playButtonEndPosition = sf::Vector2f(screenWidth / 2 - playButton.getSize().x / 2, logoEndPosition.y + logo.getSize().y + 20.f);
+        playButtonAnimationTime = 0.0f;
+        playButtonOpacity = 0;
     }
 }

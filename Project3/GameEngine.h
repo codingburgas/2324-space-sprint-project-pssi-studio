@@ -22,11 +22,19 @@ private:
     sf::RectangleShape logo;
     sf::Texture exitButtonTexture;
     sf::RectangleShape exitButton;
-    sf::Clock clock;
     sf::Texture additionalElementTexture;
     sf::RectangleShape additionalElement;
     sf::RectangleShape StudioText;
     sf::Texture StudioTextTexture;
+    sf::Texture playButtonTexture;
+    sf::RectangleShape playButton;
+
+    sf::Clock clock;
+
+    sf::Vector2f logoStartPosition;
+    sf::Vector2f logoEndPosition = sf::Vector2f(screenWidth / 2 - logo.getSize().x / 2, screenHeight / 3);
+    sf::Vector2f playButtonStartPosition;
+    sf::Vector2f playButtonEndPosition;
 
     sf::SoundBuffer soundBuffer;
     sf::Sound sound;
@@ -36,6 +44,15 @@ private:
     unsigned int screenHeight;
     bool logoVisible = true;
     bool StudioTextPopped = false;
+    bool mainMenuActive = false;
+    bool logoAnimationActive = false;
+    float logoAnimationTime = 0.0f;
+   
+
+    bool playButtonAnimationActive = false;
+    float playButtonAnimationTime = 0.0f;
+    float playButtonOpacity = 0.0f;
+
 
     // Calls the main functions
     void processEvents();
