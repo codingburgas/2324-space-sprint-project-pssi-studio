@@ -71,12 +71,26 @@ void GameEngine::update() {
 
         if (progress >= 1.0f) playButtonAnimationActive = false;
     }
+    // Backround Animation
+    float moveAmount = backgroundMoveSpeed * deltaTime;
+    background1.move(-moveAmount, 0);
+    background2.move(-moveAmount, 0);
+
+    if (background1.getPosition().x + screenWidth < 0) {
+        background1.setPosition(background2.getPosition().x + screenWidth, 0);
+    }
+
+    if (background2.getPosition().x + screenWidth < 0) {
+        background2.setPosition(background1.getPosition().x + screenWidth, 0);
+    }
 }
 
 void GameEngine::render() {
     // Really simple it renders the elements!
     window.clear();
-    window.draw(background);
+    window.draw(background1);
+    window.draw(background2);
+
     if (logoVisible) {
         window.draw(logo);
     }
@@ -149,6 +163,15 @@ void GameEngine::initializeUI() {
     playButton.setSize(sf::Vector2f(200.f, 100.f));
     playButtonStartPosition = sf::Vector2f(screenWidth / 2 - playButton.getSize().x / 2, screenHeight + 20.f);
     playButton.setFillColor(sf::Color(255, 255, 255, 0));
+
+    background1.setTexture(&backgroundTexture);
+    background2.setTexture(&backgroundTexture);
+
+    background1.setSize(sf::Vector2f(screenWidth, screenHeight));
+    background1.setPosition(0, 0);
+
+    background2.setSize(sf::Vector2f(screenWidth, screenHeight));
+    background2.setPosition(screenWidth, 0);
 }
 
 void GameEngine::animateLogo(float deltaTime) {

@@ -28,6 +28,9 @@ private:
     sf::Texture StudioTextTexture;
     sf::Texture playButtonTexture;
     sf::RectangleShape playButton;
+    sf::RectangleShape background1;
+    sf::RectangleShape background2;
+
 
     sf::Clock clock;
 
@@ -47,8 +50,10 @@ private:
     bool mainMenuActive = false;
     bool logoAnimationActive = false;
     float logoAnimationTime = 0.0f;
-   
 
+    float backgroundMoveSpeed = 10.0f;
+    float backgroundOffset = 0.0f;
+   
     bool playButtonAnimationActive = false;
     float playButtonAnimationTime = 0.0f;
     float playButtonOpacity = 0.0f;
