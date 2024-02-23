@@ -21,27 +21,42 @@ void GameEngine::run() {
 }
 
 void GameEngine::processEvents() {
-    // over all calls the exit button for now!
+    //Used to control events such as clicking buttons for now!
     sf::Event event;
     while (window.pollEvent(event)) {
-        if (event.type == sf::Event::Closed)
+        switch (event.type) {
+        case sf::Event::Closed:
             window.close();
-
-        if (event.type == sf::Event::MouseButtonPressed) {
+            break;
+        case sf::Event::MouseButtonPressed:
             if (event.mouseButton.button == sf::Mouse::Left) {
                 sf::Vector2i clickPos = sf::Mouse::getPosition(window);
-                if (exitButton.getGlobalBounds().contains(window.mapPixelToCoords(clickPos))) {
+                sf::Vector2f worldPos = window.mapPixelToCoords(clickPos);
+                if (exitButton.getGlobalBounds().contains(worldPos)) {
+                    std::cout << "Exit Button Clicked" << std::endl;
                     window.close();
                 }
+                if (mainMenuActive && playButton.getGlobalBounds().contains(worldPos)) {
+                    std::cout << "Play Button Clicked" << std::endl;
+                    expeditionScreenActive = true;
+                    mainMenuActive = false;
+                    logoVisible = false;
+                    initializeExpeditionUI();
+                }
             }
+            break;
         }
     }
 }
 
+
+
+
 void GameEngine::update() {
+    //Used to update the game state!
     float deltaTime = clock.restart().asSeconds();
     animateLogo(deltaTime);
-    // Logo Animation
+
     if (logoAnimationActive) {
         logoAnimationTime += deltaTime;
         float duration = 1.0f;
@@ -55,7 +70,7 @@ void GameEngine::update() {
         if (progress >= 1.0f) logoAnimationActive = false;
     }
 
-    // Play Button Animation
+
     if (playButtonAnimationActive) {
         playButtonAnimationTime += deltaTime;
         float duration = 1.0f;
@@ -71,7 +86,7 @@ void GameEngine::update() {
 
         if (progress >= 1.0f) playButtonAnimationActive = false;
     }
-    // Backround Animation
+
     float moveAmount = backgroundMoveSpeed * deltaTime;
     background1.move(-moveAmount, 0);
     background2.move(-moveAmount, 0);
@@ -86,25 +101,37 @@ void GameEngine::update() {
 }
 
 void GameEngine::render() {
-    // Really simple it renders the elements!
+    //Over all renders every element of the game!
     window.clear();
+
     window.draw(background1);
     window.draw(background2);
-
-    if (logoVisible) {
-        window.draw(logo);
-    }
     window.draw(exitButton);
 
-    if (StudioTextPopped) {
-        window.draw(StudioText);
+    if (expeditionScreenActive) {
+        window.draw(expeditionBackground);
+        window.draw(expeditionTitleShape);
+        window.draw(newExpeditionButton);
+        window.draw(loadExpeditionButton);
+        window.draw(oldExpeditionsButton);
     }
-    if (mainMenuActive) {
-        window.draw(playButton);
+    else {
+        if (logoVisible) {
+            window.draw(logo);
+        }
+
+
+        if (StudioTextPopped) {
+            window.draw(StudioText);
+        }
+        if (mainMenuActive) {
+            window.draw(playButton);
+        }
     }
 
     window.display();
 }
+
 
 
 void GameEngine::loadContent() {
@@ -140,6 +167,20 @@ void GameEngine::loadContent() {
         std::cerr << "Could not load play button texture" << std::endl;
     }
     playButton.setTexture(&playButtonTexture);
+    if (!expeditionBackgroundTexture.loadFromFile("Textures/ExpeditionBackground.jpg")) {
+        std::cerr << "Could not load expedition background texture" << std::endl;
+    }
+    else {
+        expeditionBackground.setTexture(&expeditionBackgroundTexture);
+    }
+    if (!expeditionTitleTexture.loadFromFile("Textures/ExpeditionTitle.png")) {
+        std::cerr << "Could not load expedition title texture" << std::endl;
+    }
+    if (!newExpeditionButtonTexture.loadFromFile("Textures/NewExpeditionButton.png") ||
+        !loadExpeditionButtonTexture.loadFromFile("Textures/LoadExpeditionButton.png") ||
+        !oldExpeditionsButtonTexture.loadFromFile("Textures/OldExpeditionsButton.png")) {
+        std::cerr << "Could not load one or more button textures" << std::endl;
+    }
 }
 
 void GameEngine::initializeUI() {
@@ -172,7 +213,46 @@ void GameEngine::initializeUI() {
 
     background2.setSize(sf::Vector2f(screenWidth, screenHeight));
     background2.setPosition(screenWidth, 0);
+
 }
+
+void GameEngine::initializeExpeditionUI() {
+    expeditionBackground.setTexture(&expeditionBackgroundTexture);
+    expeditionBackground.setSize(sf::Vector2f(1500.f, 800.f));
+    expeditionBackground.setPosition(
+        (screenWidth / 2.f) - (expeditionBackground.getSize().x / 2.f),
+        (screenHeight / 2.f) - (expeditionBackground.getSize().y / 2.f)
+    );
+
+    // Initialize the title shape with texture
+    expeditionTitleShape.setTexture(&expeditionTitleTexture); // Use the corrected member name
+    expeditionTitleShape.setSize(sf::Vector2f(500.f, 200.f));
+    expeditionTitleShape.setPosition(screenWidth / 2.f - expeditionTitleShape.getSize().x / 2.f,
+        screenHeight / 2.f - expeditionBackground.getSize().y / 2.f - 220.f);
+
+    // Initialize buttons
+    newExpeditionButton.setTexture(&newExpeditionButtonTexture);
+    loadExpeditionButton.setTexture(&loadExpeditionButtonTexture);
+    oldExpeditionsButton.setTexture(&oldExpeditionsButtonTexture);
+
+    float buttonWidth = 400.f;
+    float buttonHeight = 150.f;
+    float spacing = 40.f; // Spacing between buttons
+
+    // Set sizes and initial positions (you might adjust these positions based on your UI layout)
+    newExpeditionButton.setSize(sf::Vector2f(buttonWidth, buttonHeight));
+    loadExpeditionButton.setSize(sf::Vector2f(buttonWidth, buttonHeight));
+    oldExpeditionsButton.setSize(sf::Vector2f(buttonWidth, buttonHeight));
+
+    // Position buttons in a column within the expedition background
+    float startX = screenWidth / 2.f - buttonWidth / 2.f;
+    float startY = screenHeight / 2.f - (1.5f * buttonHeight + spacing); // Adjust startY as needed to center the buttons
+
+    newExpeditionButton.setPosition(startX, startY);
+    loadExpeditionButton.setPosition(startX, startY + buttonHeight + spacing);
+    oldExpeditionsButton.setPosition(startX, startY + 2 * (buttonHeight + spacing));
+}
+
 
 void GameEngine::animateLogo(float deltaTime) {
     // Play the introduction sound here! (Don't touch here :D)

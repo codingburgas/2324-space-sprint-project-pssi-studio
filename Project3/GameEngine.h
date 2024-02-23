@@ -30,7 +30,11 @@ private:
     sf::RectangleShape playButton;
     sf::RectangleShape background1;
     sf::RectangleShape background2;
-
+    sf::RectangleShape expeditionBackground;
+    sf::RectangleShape newExpeditionButton, loadExpeditionButton, oldExpeditionsButton;
+    sf::Texture expeditionBackgroundTexture, newExpeditionButtonTexture, loadExpeditionButtonTexture, oldExpeditionsButtonTexture;
+    sf::Texture expeditionTitleTexture;
+    sf::RectangleShape expeditionTitleShape;
 
     sf::Clock clock;
 
@@ -58,9 +62,12 @@ private:
     float playButtonAnimationTime = 0.0f;
     float playButtonOpacity = 0.0f;
 
+    bool expeditionScreenActive = false;
+
 
     // Calls the main functions
     void processEvents();
+    void initializeExpeditionUI();
     void update();
     void render();
     void loadContent();
