@@ -151,11 +151,13 @@ void GameEngine::loadContent() {
     }
     exitButton.setTexture(&exitButtonTexture);
 
-    if (!soundBuffer.loadFromFile("Audio/IntroSound.mp3")) {
+    if (!soundBuffer.loadFromFile("Audio/MainSong.mp3")) {
         std::cerr << "Failed to load sound file" << std::endl;
     }
     else {
         std::cout << "Sound file loaded successfully" << std::endl;
+        sound.setBuffer(soundBuffer);
+        sound.setLoop(true);
     }
     sound.setBuffer(soundBuffer);
 
