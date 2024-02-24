@@ -1,9 +1,15 @@
 #include <iostream>
+#include <fstream>
 #include <string>
 #include <vector>
 #include <iomanip>
 #include <algorithm>
+
+#ifdef _WIN32
+#include <windows.h>
+#else
 #include <cstdlib>
+#endif
 
 using namespace std;
 
@@ -19,6 +25,7 @@ enum MainMenuOptions {
     SEARCH_EXPEDITIONS,
     SAVE_DATA,
     LOAD_DATA,
+    CALCULATE_DISTANCE,
     EXIT
 };
 
@@ -40,13 +47,23 @@ struct Expedition {
     string destination;
     ExpeditionStatus status;
     vector<CrewMember> crewMembers;
+    double distance;
 
     bool operator==(const Expedition& other) const {
         return id == other.id;
     }
 };
 
+void clearScreen() {
+#ifdef _WIN32
+    system("cls");
+#else
+    system("clear");
+#endif
+}
+
 int displayMainMenu() {
+    clearScreen();
     cout << "======================================================================================" << endl;
     cout << "Space Expedition Manager" << endl;
     cout << "======================================================================================" << endl;
@@ -61,13 +78,13 @@ int displayMainMenu() {
     cout << "9. Search Expeditions" << endl;
     cout << "10. Save Data" << endl;
     cout << "11. Load Data" << endl;
-    cout << "12. Exit" << endl;
+    cout << "12. Calculate Distance" << endl;
+    cout << "13. Exit" << endl;
     cout << "======================================================================================" << endl;
     cout << "Enter your choice: ";
 
     int choice;
     cin >> choice;
-    system("CLS");
     return choice;
 }
 
@@ -88,6 +105,7 @@ void createExpedition(vector<Expedition>& expeditions) {
     ExpeditionStatus expeditionStatus = static_cast<ExpeditionStatus>(status);
 
     vector<CrewMember> crewMembers;
+
     cout << "Enter the number of crew members: ";
     int numCrewMembers;
     cin >> numCrewMembers;
@@ -112,11 +130,10 @@ void createExpedition(vector<Expedition>& expeditions) {
     expeditions.push_back(expedition);
 
     cout << "Expedition created successfully!" << endl;
-    system("PAUSE");
-    system("CLS");
 }
 
 void viewExpeditions(vector<Expedition> expeditions) {
+    clearScreen();
     cout << "======================================================================================" << endl;
     cout << "Expeditions" << endl;
     cout << "======================================================================================" << endl;
@@ -144,8 +161,6 @@ void viewExpeditions(vector<Expedition> expeditions) {
     }
 
     cout << "======================================================================================" << endl;
-    system("PAUSE");
-    system("CLS");
 }
 
 void editExpedition(vector<Expedition>& expeditions) {
@@ -186,8 +201,6 @@ void editExpedition(vector<Expedition>& expeditions) {
     expedition->status = expeditionStatus;
 
     cout << "Expedition updated successfully!" << endl;
-    system("PAUSE");
-    system("CLS");
 }
 
 void deleteExpedition(vector<Expedition>& expeditions) {
@@ -211,8 +224,6 @@ void deleteExpedition(vector<Expedition>& expeditions) {
     expeditions.erase(remove(expeditions.begin(), expeditions.end(), *expedition), expeditions.end());
 
     cout << "Expedition deleted successfully!" << endl;
-    system("PAUSE");
-    system("CLS");
 }
 
 void viewCrewMembers(vector<Expedition> expeditions) {
@@ -233,6 +244,7 @@ void viewCrewMembers(vector<Expedition> expeditions) {
         return;
     }
 
+    clearScreen();
     cout << "======================================================================================" << endl;
     cout << "Crew Members of Expedition " << expedition->name << endl;
     cout << "======================================================================================" << endl;
@@ -240,10 +252,7 @@ void viewCrewMembers(vector<Expedition> expeditions) {
     for (CrewMember crewMember : expedition->crewMembers) {
         cout << crewMember.name << endl;
     }
-
     cout << "======================================================================================" << endl;
-    system("PAUSE");
-    system("CLS");
 }
 
 void viewCrewMembersWithRoles(vector<Expedition> expeditions) {
@@ -264,6 +273,7 @@ void viewCrewMembersWithRoles(vector<Expedition> expeditions) {
         return;
     }
 
+    clearScreen();
     cout << "======================================================================================" << endl;
     cout << "Crew Members with Roles of Expedition " << expedition->name << endl;
     cout << "======================================================================================" << endl;
@@ -271,10 +281,7 @@ void viewCrewMembersWithRoles(vector<Expedition> expeditions) {
     for (CrewMember crewMember : expedition->crewMembers) {
         cout << crewMember.name << "\t" << crewMember.role << endl;
     }
-
     cout << "======================================================================================" << endl;
-    system("PAUSE");
-    system("CLS");
 }
 
 void searchExpeditions(const vector<Expedition>& expeditions) {
@@ -284,6 +291,7 @@ void searchExpeditions(const vector<Expedition>& expeditions) {
     getline(cin, query);
 
     bool found = false;
+    clearScreen();
     cout << "======================================================================================" << endl;
     cout << "Search Results" << endl;
     cout << "======================================================================================" << endl;
@@ -291,7 +299,6 @@ void searchExpeditions(const vector<Expedition>& expeditions) {
     for (const Expedition& expedition : expeditions) {
         if (expedition.name.find(query) != string::npos || expedition.destination.find(query) != string::npos) {
             cout << expedition.id << "\t" << expedition.name << "\t" << expedition.destination << "\t";
-
             string status;
             switch (expedition.status) {
             case PLANNED:
@@ -315,8 +322,6 @@ void searchExpeditions(const vector<Expedition>& expeditions) {
         cout << "No matching expeditions found." << endl;
     }
     cout << "======================================================================================" << endl;
-    system("PAUSE");
-    system("CLS");
 }
 
 void addCrewMember(vector<Expedition>& expeditions) {
@@ -352,8 +357,6 @@ void addCrewMember(vector<Expedition>& expeditions) {
     expedition->crewMembers.push_back(crewMember);
 
     cout << "Crew member added successfully!" << endl;
-    system("PAUSE");
-    system("CLS");
 }
 
 void removeCrewMember(vector<Expedition>& expeditions) {
@@ -392,88 +395,111 @@ void removeCrewMember(vector<Expedition>& expeditions) {
     expedition->crewMembers.erase(it);
 
     cout << "Crew member removed successfully!" << endl;
-    system("PAUSE");
-    system("CLS");
 }
 
-void saveExpeditionsToFile(const vector<Expedition>& expeditions) {
+void saveData(const vector<Expedition>& expeditions) {
     ofstream outputFile("expeditions.txt");
-
-    if (!outputFile) {
-        cerr << "Error: Unable to open file for writing." << endl;
-        return;
-    }
-
-    for (const Expedition& expedition : expeditions) {
-        outputFile << expedition.id << "," << expedition.name << "," << expedition.destination << "," << expedition.status << endl;
-        for (const CrewMember& crewMember : expedition.crewMembers) {
-            outputFile << crewMember.name << "," << crewMember.role << endl;
+    if (outputFile.is_open()) {
+        for (const Expedition& expedition : expeditions) {
+            outputFile << expedition.id << "," << expedition.name << "," << expedition.destination << "," << expedition.status << ",";
+            for (const CrewMember& crewMember : expedition.crewMembers) {
+                outputFile << crewMember.name << ":" << crewMember.role << ";";
+            }
+            outputFile << endl;
         }
-        outputFile << endl;
+        outputFile.close();
+        cout << "Data saved successfully!" << endl;
     }
-
-    outputFile.close();
-
-    cout << "Expeditions saved to file successfully!" << endl;
-    system("PAUSE");
-    system("CLS");
+    else {
+        cout << "Unable to open file for saving data!" << endl;
+    }
 }
 
-void loadExpeditionsFromFile(vector<Expedition>& expeditions) {
-    ifstream inputFile("expeditions.txt");
-
-    if (!inputFile) {
-        cerr << "Error: Unable to open file for reading." << endl;
-        return;
-    }
-
+void loadData(vector<Expedition>& expeditions) {
     expeditions.clear();
-
-    while (inputFile) {
-        Expedition expedition;
+    ifstream inputFile("expeditions.txt");
+    if (inputFile.is_open()) {
         string line;
-        if (!getline(inputFile, line)) {
+        while (getline(inputFile, line)) {
+            Expedition expedition;
+            size_t pos = 0;
+            string token;
+            while ((pos = line.find(",")) != string::npos) {
+                token = line.substr(0, pos);
+                line.erase(0, pos + 1);
+                expedition.id = stoi(token);
+
+                pos = line.find(",");
+                token = line.substr(0, pos);
+                line.erase(0, pos + 1);
+                expedition.name = token;
+
+                pos = line.find(",");
+                token = line.substr(0, pos);
+                line.erase(0, pos + 1);
+                expedition.destination = token;
+
+                pos = line.find(",");
+                token = line.substr(0, pos);
+                line.erase(0, pos + 1);
+                expedition.status = static_cast<ExpeditionStatus>(stoi(token));
+
+                pos = line.find(";");
+                token = line.substr(0, pos);
+                line.erase(0, pos + 1);
+                size_t colonPos = token.find(":");
+                CrewMember crewMember;
+                crewMember.name = token.substr(0, colonPos);
+                crewMember.role = token.substr(colonPos + 1);
+                expedition.crewMembers.push_back(crewMember);
+            }
+            expeditions.push_back(expedition);
+        }
+        inputFile.close();
+        cout << "Data loaded successfully!" << endl;
+    }
+    else {
+        cout << "Unable to open file for loading data!" << endl;
+    }
+}
+
+double calculateDistance(const Expedition& expedition) {
+    // Placeholder function for distance calculation, replace with actual logic
+    return 1000.0; // Placeholder value
+}
+
+void calculateExpeditionDistance(vector<Expedition>& expeditions) {
+    cout << "Enter the ID of the expedition to calculate distance: ";
+    int id;
+    cin >> id;
+
+    Expedition* expedition = nullptr;
+    for (Expedition& exp : expeditions) {
+        if (exp.id == id) {
+            expedition = &exp;
             break;
         }
-
-        istringstream ss(line);
-        string token;
-        getline(ss, token, ',');
-        expedition.id = stoi(token);
-        getline(ss, token, ',');
-        expedition.name = token;
-        getline(ss, token, ',');
-        expedition.destination = token;
-        getline(ss, token, ',');
-        expedition.status = static_cast<ExpeditionStatus>(stoi(token));
-
-        while (getline(inputFile, line)) {
-            if (line.empty()) {
-                break;
-            }
-            CrewMember crewMember;
-            istringstream ss(line);
-            getline(ss, crewMember.name, ',');
-            getline(ss, crewMember.role, ',');
-            expedition.crewMembers.push_back(crewMember);
-        }
-
-        expeditions.push_back(expedition);
     }
 
-    inputFile.close();
+    if (expedition == nullptr) {
+        cout << "Expedition not found!" << endl;
+        return;
+    }
 
-    cout << "Expeditions loaded from file successfully!" << endl;
-    system("PAUSE");
-    system("CLS");
+    double distance = calculateDistance(*expedition);
+    expedition->distance = distance;
+    cout << "Distance calculated for Expedition " << expedition->name << ": " << distance << " units" << endl;
 }
 
 int main() {
     vector<Expedition> expeditions;
 
+    loadData(expeditions);
+
     int choice;
     do {
         choice = displayMainMenu();
+
         switch (choice) {
         case NEW_EXPEDITION:
             createExpedition(expeditions);
@@ -503,18 +529,27 @@ int main() {
             searchExpeditions(expeditions);
             break;
         case SAVE_DATA:
-            saveExpeditionsToFile(expeditions);
+            saveData(expeditions);
             break;
         case LOAD_DATA:
-            loadExpeditionsFromFile(expeditions);
+            loadData(expeditions);
+            break;
+        case CALCULATE_DISTANCE:
+            calculateExpeditionDistance(expeditions);
             break;
         case EXIT:
-            cout << "Exiting the program..." << endl;
+            cout << "Exiting program..." << endl;
             break;
         default:
-            cout << "Invalid choice. Please try again." << endl;
-            break;
+            cout << "Invalid choice. Please enter a valid option." << endl;
         }
+
+        if (choice != EXIT) {
+            cout << "Press Enter to continue...";
+            cin.ignore();
+            cin.get();
+        }
+
     } while (choice != EXIT);
 
     return 0;
