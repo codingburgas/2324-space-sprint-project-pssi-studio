@@ -13,11 +13,25 @@
 
 using namespace std;
 
+// Структура за планета в слънчевата система
 struct Planet {
     string name;
-    double distanceFromEarth;
+    double distanceFromEarth; // Разстояние от Земята в милиони километри
 };
 
+// Структура за роля на член на екипажа
+struct Role {
+    string name;
+};
+
+// Структура за космически кораб
+struct SpaceshipOption {
+    string name;
+    double speed; // Например, скорост в км/ч
+    double capacity; // Например, капацитет на горивния резервоар в литри
+};
+
+// Списък с планети в слънчевата система
 vector<Planet> solarSystem = {
     {"Mercury", 77.3},
     {"Venus", 38.2},
@@ -27,6 +41,27 @@ vector<Planet> solarSystem = {
     {"Saturn", 1200.0},
     {"Uranus", 2600.0},
     {"Neptune", 4350.0},
+};
+
+// Списък с роли на членовете на екипажа
+vector<Role> crewRoles = {
+    {"Captain"},
+    {"Navigator"},
+    {"Engineer"},
+    {"Pilot"},
+    {"Medic"},
+    {"Scientist"},
+    {"Crew Member"} // Новата роля
+};
+
+// Списък с опции за космически кораби
+vector<SpaceshipOption> spaceshipOptions = {
+    {"Falcon", 100000, 10000},
+    {"Starblazer", 120000, 12000},
+    {"Nebula Voyager", 90000, 8000},
+    {"Galaxy Runner", 110000, 11000},
+    {"Cosmo Strider", 95000, 9000},
+    {"Stellar Cruiser", 115000, 10000}
 };
 
 enum MainMenuOptions {
@@ -52,18 +87,9 @@ enum ExpeditionStatus {
     CANCELED
 };
 
-enum CrewRole {
-    CAPTAIN,
-    PILOT,
-    ENGINEER,
-    SCIENTIST,
-    MEDIC,
-    COMMUNICATIONS_OFFICER
-};
-
 struct CrewMember {
     string name;
-    CrewRole role;
+    string role;
 };
 
 struct Expedition {
@@ -113,13 +139,13 @@ int displayMainMenu() {
     return choice;
 }
 
-int displaySolarSystemMenu() {
+int displaySpaceshipOptions() {
     clearScreen();
     cout << "======================================================================================" << endl;
-    cout << "Select Destination Planet" << endl;
+    cout << "Select Spaceship" << endl;
     cout << "======================================================================================" << endl;
-    for (int i = 0; i < solarSystem.size(); ++i) {
-        cout << i + 1 << ". " << solarSystem[i].name << endl;
+    for (int i = 0; i < spaceshipOptions.size(); ++i) {
+        cout << i + 1 << ". " << spaceshipOptions[i].name << endl;
     }
     cout << "======================================================================================" << endl;
     cout << "Enter your choice: ";
@@ -135,13 +161,13 @@ void createExpedition(vector<Expedition>& expeditions) {
     string name;
     getline(cin, name);
 
-    int planetChoice = displaySolarSystemMenu();
-    if (planetChoice < 1 || planetChoice > solarSystem.size()) {
-        cout << "Invalid planet choice!" << endl;
+    int planetChoice = displaySpaceshipOptions();
+    if (planetChoice < 1 || planetChoice > spaceshipOptions.size()) {
+        cout << "Invalid spaceship choice!" << endl;
         return;
     }
 
-    string destination = solarSystem[planetChoice - 1].name;
+    string destination = spaceshipOptions[planetChoice - 1].name;
 
     cout << "Enter expedition status (1 for Planned, 2 for In Progress, 3 for Completed, 4 for Canceled): ";
     int status;
@@ -155,8 +181,9 @@ void createExpedition(vector<Expedition>& expeditions) {
     int numCrewMembers;
     cin >> numCrewMembers;
 
+    // Проверка за максимален брой членове на екипажа
     if (numCrewMembers > 15) {
-        cout << "Maximum number of crew members allowed is 15!" << endl;
+        cout << "Expedition cannot have more than 15 crew members." << endl;
         return;
     }
 
@@ -166,16 +193,19 @@ void createExpedition(vector<Expedition>& expeditions) {
         cout << "Enter crew member name: ";
         getline(cin, crewMember.name);
 
-        cout << "Select crew member role (1 for Captain, 2 for Pilot, 3 for Engineer, 4 for Scientist, 5 for Medic, 6 for Communications Officer): ";
+        cout << "Select crew member role:" << endl;
+        for (int j = 0; j < crewRoles.size(); ++j) {
+            cout << j + 1 << ". " << crewRoles[j].name << endl;
+        }
+        cout << "Enter your choice: ";
         int roleChoice;
         cin >> roleChoice;
-
-        if (roleChoice < 1 || roleChoice > 6) {
+        if (roleChoice < 1 || roleChoice > crewRoles.size()) {
             cout << "Invalid role choice!" << endl;
             return;
         }
+        crewMember.role = crewRoles[roleChoice - 1].name;
 
-        crewMember.role = static_cast<CrewRole>(roleChoice - 1);
         crewMembers.push_back(crewMember);
     }
 
@@ -191,23 +221,98 @@ void createExpedition(vector<Expedition>& expeditions) {
     cout << "Expedition created successfully!" << endl;
 }
 
-string getCrewRoleName(CrewRole role) {
-    switch (role) {
-    case CAPTAIN:
-        return "Captain";
-    case PILOT:
-        return "Pilot";
-    case ENGINEER:
-        return "Engineer";
-    case SCIENTIST:
-        return "Scientist";
-    case MEDIC:
-        return "Medic";
-    case COMMUNICATIONS_OFFICER:
-        return "Communications Officer";
-    default:
-        return "Member";
+void viewExpeditions(vector<Expedition> expeditions) {
+    clearScreen();
+    cout << "======================================================================================" << endl;
+    cout << "Expeditions" << endl;
+    cout << "======================================================================================" << endl;
+    cout << "ID\tName\tDestination\tStatus" << endl;
+    for (Expedition expedition : expeditions) {
+        cout << expedition.id << "\t" << expedition.name << "\t" << expedition.destination << "\t";
+
+        string status;
+        switch (expedition.status) {
+        case PLANNED:
+            status = "Planned";
+            break;
+        case IN_PROGRESS:
+            status = "In Progress";
+            break;
+        case COMPLETED:
+            status = "Completed";
+            break;
+        case CANCELED:
+            status = "Canceled";
+            break;
+        }
+
+        cout << status << endl;
     }
+
+    cout << "======================================================================================" << endl;
+}
+
+void editExpedition(vector<Expedition>& expeditions) {
+    cout << "Enter the ID of the expedition to edit: ";
+    int id;
+    cin >> id;
+
+    Expedition* expedition = nullptr;
+    for (Expedition& exp : expeditions) {
+        if (exp.id == id) {
+            expedition = &exp;
+            break;
+        }
+    }
+
+    if (expedition == nullptr) {
+        cout << "Expedition not found!" << endl;
+        return;
+    }
+
+    cout << "Enter new expedition name: ";
+    cin.ignore();
+    string name;
+    getline(cin, name);
+
+    cout << "Enter new expedition destination: ";
+    string destination;
+    getline(cin, destination);
+
+    cout << "Enter new expedition status (1 for Planned, 2 for In Progress, 3 for Completed, 4 for Canceled): ";
+    int status;
+    cin >> status;
+
+    ExpeditionStatus expeditionStatus = static_cast<ExpeditionStatus>(status);
+
+    expedition->name = name;
+    expedition->destination = destination;
+    expedition->status = expeditionStatus;
+
+    cout << "Expedition updated successfully!" << endl;
+}
+
+void deleteExpedition(vector<Expedition>& expeditions) {
+    cout << "Enter the ID of the expedition to delete: ";
+    int id;
+    cin >> id;
+
+    Expedition* expedition = nullptr;
+    for (Expedition& exp : expeditions) {
+        if (exp.id == id) {
+            expedition = &exp;
+            break;
+        }
+    }
+
+    if (expedition == nullptr) {
+        cout << "Expedition not found!" << endl;
+        return;
+    }
+
+    expeditions.erase(remove(expeditions.begin(), expeditions.end(), *expedition), expeditions.end());
+
+    cout << "Expedition deleted successfully!" << endl;
 }
 
 void viewCrewMembers(vector<Expedition> expeditions) {
@@ -232,9 +337,9 @@ void viewCrewMembers(vector<Expedition> expeditions) {
     cout << "======================================================================================" << endl;
     cout << "Crew Members of Expedition " << expedition->name << endl;
     cout << "======================================================================================" << endl;
-    cout << "Name\tRole" << endl;
+    cout << "Name" << endl;
     for (CrewMember crewMember : expedition->crewMembers) {
-        cout << crewMember.name << "\t" << getCrewRoleName(crewMember.role) << endl;
+        cout << crewMember.name << endl;
     }
     cout << "======================================================================================" << endl;
 }
@@ -263,9 +368,134 @@ void viewCrewMembersWithRoles(vector<Expedition> expeditions) {
     cout << "======================================================================================" << endl;
     cout << "Name\tRole" << endl;
     for (CrewMember crewMember : expedition->crewMembers) {
-        cout << crewMember.name << "\t" << getCrewRoleName(crewMember.role) << endl;
+        cout << crewMember.name << "\t" << crewMember.role << endl;
     }
     cout << "======================================================================================" << endl;
+}
+
+void searchExpeditions(const vector<Expedition>& expeditions) {
+    cout << "Enter the name or destination to search: ";
+    string query;
+    cin.ignore();
+    getline(cin, query);
+
+    bool found = false;
+    clearScreen();
+    cout << "======================================================================================" << endl;
+    cout << "Search Results" << endl;
+    cout << "======================================================================================" << endl;
+    cout << "ID\tName\tDestination\tStatus" << endl;
+    for (const Expedition& expedition : expeditions) {
+        if (expedition.name.find(query) != string::npos || expedition.destination.find(query) != string::npos) {
+            cout << expedition.id << "\t" << expedition.name << "\t" << expedition.destination << "\t";
+            string status;
+            switch (expedition.status) {
+            case PLANNED:
+                status = "Planned";
+                break;
+            case IN_PROGRESS:
+                status = "In Progress";
+                break;
+            case COMPLETED:
+                status = "Completed";
+                break;
+            case CANCELED:
+                status = "Canceled";
+                break;
+            }
+            cout << status << endl;
+            found = true;
+        }
+    }
+    if (!found) {
+        cout << "No matching expeditions found." << endl;
+    }
+    cout << "======================================================================================" << endl;
+}
+
+void addCrewMember(vector<Expedition>& expeditions) {
+    cout << "Enter the ID of the expedition to add a crew member: ";
+    int id;
+    cin >> id;
+
+    Expedition* expedition = nullptr;
+    for (Expedition& exp : expeditions) {
+        if (exp.id == id) {
+            expedition = &exp;
+            break;
+        }
+    }
+
+    if (expedition == nullptr) {
+        cout << "Expedition not found!" << endl;
+        return;
+    }
+
+    cout << "Enter crew member name: ";
+    cin.ignore();
+    string name;
+    getline(cin, name);
+
+    cout << "Select crew member role:" << endl;
+    for (int j = 0; j < crewRoles.size(); ++j) {
+        cout << j + 1 << ". " << crewRoles[j].name << endl;
+    }
+    cout << "Enter your choice: ";
+    int roleChoice;
+    cin >> roleChoice;
+    if (roleChoice < 1 || roleChoice > crewRoles.size()) {
+        cout << "Invalid role choice!" << endl;
+        return;
+    }
+    string role = crewRoles[roleChoice - 1].name;
+
+    CrewMember crewMember;
+    crewMember.name = name;
+    crewMember.role = role;
+
+    expedition->crewMembers.push_back(crewMember);
+
+    cout << "Crew member added successfully!" << endl;
+}
+
+void removeCrewMember(vector<Expedition>& expeditions) {
+    cout << "Enter the ID of the expedition to remove a crew member: ";
+    int id;
+    cin >> id;
+
+    Expedition* expedition = nullptr;
+    for (Expedition& exp : expeditions) {
+        if (exp.id == id) {
+            expedition = &exp;
+            break;
+        }
+    }
+
+    if (expedition == nullptr) {
+        cout << "Expedition not found!" << endl;
+        return;
+    }
+
+    cout << "Enter the name of the crew member to remove: ";
+    string name;
+    cin.ignore();
+    getline(cin, name);
+
+    bool found = false;
+    for (auto it = expedition->crewMembers.begin(); it != expedition->crewMembers.end(); ++it) {
+        if (it->name == name) {
+            expedition->crewMembers.erase(it);
+            found = true;
+            break;
+        }
+    }
+
+    if (found) {
+        cout << "Crew member removed successfully!" << endl;
+    }
+    else {
+        cout << "Crew member not found!" << endl;
+    }
 }
 
 int main() {
@@ -304,27 +534,21 @@ int main() {
             searchExpeditions(expeditions);
             break;
         case SAVE_DATA:
-            saveData(expeditions);
+            // Извикване на функцията за запис на данни
             break;
         case LOAD_DATA:
-            loadData(expeditions);
+            // Извикване на функцията за зареждане на данни
             break;
         case CALCULATE_DISTANCE:
-            calculateExpeditionDistance(expeditions);
+            // Извикване на функцията за изчисляване на разстояние
             break;
         case EXIT:
             cout << "Exiting program..." << endl;
             break;
         default:
-            cout << "Invalid choice. Please enter a valid option." << endl;
+            cout << "Invalid choice. Please try again." << endl;
+            break;
         }
-
-        if (choice != EXIT) {
-            cout << "Press Enter to continue...";
-            cin.ignore();
-            cin.get();
-        }
-
     } while (choice != EXIT);
 
     return 0;
