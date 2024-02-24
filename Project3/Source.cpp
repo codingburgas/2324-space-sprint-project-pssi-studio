@@ -54,16 +54,7 @@ struct Expedition {
     }
 };
 
-void clearScreen() {
-#ifdef _WIN32
-    system("cls");
-#else
-    system("clear");
-#endif
-}
-
 int displayMainMenu() {
-    clearScreen();
     cout << "======================================================================================" << endl;
     cout << "Space Expedition Manager" << endl;
     cout << "======================================================================================" << endl;
@@ -133,7 +124,6 @@ void createExpedition(vector<Expedition>& expeditions) {
 }
 
 void viewExpeditions(vector<Expedition> expeditions) {
-    clearScreen();
     cout << "======================================================================================" << endl;
     cout << "Expeditions" << endl;
     cout << "======================================================================================" << endl;
@@ -244,7 +234,6 @@ void viewCrewMembers(vector<Expedition> expeditions) {
         return;
     }
 
-    clearScreen();
     cout << "======================================================================================" << endl;
     cout << "Crew Members of Expedition " << expedition->name << endl;
     cout << "======================================================================================" << endl;
@@ -273,7 +262,6 @@ void viewCrewMembersWithRoles(vector<Expedition> expeditions) {
         return;
     }
 
-    clearScreen();
     cout << "======================================================================================" << endl;
     cout << "Crew Members with Roles of Expedition " << expedition->name << endl;
     cout << "======================================================================================" << endl;
@@ -291,7 +279,6 @@ void searchExpeditions(const vector<Expedition>& expeditions) {
     getline(cin, query);
 
     bool found = false;
-    clearScreen();
     cout << "======================================================================================" << endl;
     cout << "Search Results" << endl;
     cout << "======================================================================================" << endl;
