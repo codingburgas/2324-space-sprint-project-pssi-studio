@@ -13,25 +13,21 @@
 
 using namespace std;
 
-// Структура за планета в слънчевата система
 struct Planet {
     string name;
-    double distanceFromEarth; // Разстояние от Земята в милиони километри
+    double distanceFromEarth;
 };
 
-// Структура за роля на член на екипажа
 struct Role {
     string name;
 };
 
-// Структура за космически кораб
 struct SpaceshipOption {
     string name;
-    double speed; // Например, скорост в км/ч
-    double capacity; // Например, капацитет на горивния резервоар в литри
+    double speed;
+    double capacity;
 };
 
-// Списък с планети в слънчевата система
 vector<Planet> solarSystem = {
     {"Mercury", 77.3},
     {"Venus", 38.2},
@@ -43,7 +39,6 @@ vector<Planet> solarSystem = {
     {"Neptune", 4350.0},
 };
 
-// Списък с роли на членовете на екипажа
 vector<Role> crewRoles = {
     {"Captain"},
     {"Navigator"},
@@ -51,10 +46,9 @@ vector<Role> crewRoles = {
     {"Pilot"},
     {"Medic"},
     {"Scientist"},
-    {"Crew Member"} // Новата роля
+    {"Crew Member"}
 };
 
-// Списък с опции за космически кораби
 vector<SpaceshipOption> spaceshipOptions = {
     {"Falcon", 100000, 10000},
     {"Starblazer", 120000, 12000},
@@ -181,7 +175,6 @@ void createExpedition(vector<Expedition>& expeditions) {
     int numCrewMembers;
     cin >> numCrewMembers;
 
-    // Проверка за максимален брой членове на екипажа
     if (numCrewMembers > 15) {
         cout << "Expedition cannot have more than 15 crew members." << endl;
         return;
@@ -457,7 +450,71 @@ void addCrewMember(vector<Expedition>& expeditions) {
 
     cout << "Crew member added successfully!" << endl;
 }
+void saveData(const vector<Expedition>& expeditions) {
+    ofstream outputFile("expeditions.txt");
+    if (outputFile.is_open()) {
+        for (const Expedition& expedition : expeditions) {
+            outputFile << expedition.id << "," << expedition.name << "," << expedition.destination << "," << expedition.status << ",";
+            for (const CrewMember& crewMember : expedition.crewMembers) {
+                outputFile << crewMember.name << ":" << crewMember.role << ";";
+            }
+            outputFile << endl;
+        }
+        outputFile.close();
+        cout << "Data saved successfully!" << endl;
+    }
+    else {
+        cout << "Unable to open file for saving data!" << endl;
+    }
+}
 
+void loadData(vector<Expedition>& expeditions) {
+    expeditions.clear();
+    ifstream inputFile("expeditions.txt");
+    if (inputFile.is_open()) {
+        string line;
+        while (getline(inputFile, line)) {
+            Expedition expedition;
+            size_t pos = 0;
+            string token;
+            while ((pos = line.find(",")) != string::npos) {
+                token = line.substr(0, pos);
+                line.erase(0, pos + 1);
+                expedition.id = stoi(token);
+
+                pos = line.find(",");
+                token = line.substr(0, pos);
+                line.erase(0, pos + 1);
+                expedition.name = token;
+
+                pos = line.find(",");
+                token = line.substr(0, pos);
+                line.erase(0, pos + 1);
+                expedition.destination = token;
+
+                pos = line.find(",");
+                token = line.substr(0, pos);
+                line.erase(0, pos + 1);
+                expedition.status = static_cast<ExpeditionStatus>(stoi(token));
+
+                pos = line.find(";");
+                token = line.substr(0, pos);
+                line.erase(0, pos + 1);
+                size_t colonPos = token.find(":");
+                CrewMember crewMember;
+                crewMember.name = token.substr(0, colonPos);
+                crewMember.role = token.substr(colonPos + 1);
+                expedition.crewMembers.push_back(crewMember);
+            }
+            expeditions.push_back(expedition);
+        }
+        inputFile.close();
+        cout << "Data loaded successfully!" << endl;
+    }
+    else {
+        cout << "Unable to open file for loading data!" << endl;
+    }
+}
 void removeCrewMember(vector<Expedition>& expeditions) {
     cout << "Enter the ID of the expedition to remove a crew member: ";
     int id;
@@ -497,7 +554,33 @@ void removeCrewMember(vector<Expedition>& expeditions) {
         cout << "Crew member not found!" << endl;
     }
 }
+void calculateExpeditionDistance(vector<Expedition>& expeditions) {
+    cout << "Enter the ID of the expedition to calculate distance: ";
+    int id;
+    cin >> id;
 
+    Expedition* expedition = nullptr;
+    for (Expedition& exp : expeditions) {
+        if (exp.id == id) {
+            expedition = &exp;
+            break;
+        }
+    }
+
+    if (expedition == nullptr) {
+        cout << "Expedition not found!" << endl;
+        return;
+    }
+
+    double distance = calculateDistance(*expedition);
+    if (distance != -1.0) {
+        expedition->distance = distance;
+        cout << "Distance calculated for Expedition " << expedition->name << ": " << distance << " million kilometers" << endl;
+    }
+    else {
+        cout << "Distance to destination planet not available!" << endl;
+    }
+}
 int main() {
     vector<Expedition> expeditions;
 
@@ -534,13 +617,13 @@ int main() {
             searchExpeditions(expeditions);
             break;
         case SAVE_DATA:
-            // Извикване на функцията за запис на данни
+            saveData(expeditions);
             break;
         case LOAD_DATA:
-            // Извикване на функцията за зареждане на данни
+            loadData(expeditions);
             break;
         case CALCULATE_DISTANCE:
-            // Извикване на функцията за изчисляване на разстояние
+            calculateExpeditionDistance(expeditions);
             break;
         case EXIT:
             cout << "Exiting program..." << endl;
