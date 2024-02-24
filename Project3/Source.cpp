@@ -13,6 +13,22 @@
 
 using namespace std;
 
+struct Planet {
+    string name;
+    double distanceFromEarth;
+};
+
+vector<Planet> solarSystem = {
+    {"Mercury", 77.3},
+    {"Venus", 38.2},
+    {"Earth", 0.0},
+    {"Mars", 54.6},
+    {"Jupiter", 588.0},
+    {"Saturn", 1200.0},
+    {"Uranus", 2600.0},
+    {"Neptune", 4350.0},
+};
+
 enum MainMenuOptions {
     NEW_EXPEDITION = 1,
     VIEW_EXPEDITIONS,
@@ -54,7 +70,16 @@ struct Expedition {
     }
 };
 
+void clearScreen() {
+#ifdef _WIN32
+    system("cls");
+#else
+    system("clear");
+#endif
+}
+
 int displayMainMenu() {
+    clearScreen();
     cout << "======================================================================================" << endl;
     cout << "Space Expedition Manager" << endl;
     cout << "======================================================================================" << endl;
@@ -79,15 +104,35 @@ int displayMainMenu() {
     return choice;
 }
 
+int displaySolarSystemMenu() {
+    clearScreen();
+    cout << "======================================================================================" << endl;
+    cout << "Select Destination Planet" << endl;
+    cout << "======================================================================================" << endl;
+    for (int i = 0; i < solarSystem.size(); ++i) {
+        cout << i + 1 << ". " << solarSystem[i].name << endl;
+    }
+    cout << "======================================================================================" << endl;
+    cout << "Enter your choice: ";
+
+    int choice;
+    cin >> choice;
+    return choice;
+}
+
 void createExpedition(vector<Expedition>& expeditions) {
     cout << "Enter expedition name: ";
     cin.ignore();
     string name;
     getline(cin, name);
 
-    cout << "Enter expedition destination: ";
-    string destination;
-    getline(cin, destination);
+    int planetChoice = displaySolarSystemMenu();
+    if (planetChoice < 1 || planetChoice > solarSystem.size()) {
+        cout << "Invalid planet choice!" << endl;
+        return;
+    }
+
+    string destination = solarSystem[planetChoice - 1].name;
 
     cout << "Enter expedition status (1 for Planned, 2 for In Progress, 3 for Completed, 4 for Canceled): ";
     int status;
@@ -124,6 +169,7 @@ void createExpedition(vector<Expedition>& expeditions) {
 }
 
 void viewExpeditions(vector<Expedition> expeditions) {
+    clearScreen();
     cout << "======================================================================================" << endl;
     cout << "Expeditions" << endl;
     cout << "======================================================================================" << endl;
@@ -234,6 +280,7 @@ void viewCrewMembers(vector<Expedition> expeditions) {
         return;
     }
 
+    clearScreen();
     cout << "======================================================================================" << endl;
     cout << "Crew Members of Expedition " << expedition->name << endl;
     cout << "======================================================================================" << endl;
@@ -262,6 +309,7 @@ void viewCrewMembersWithRoles(vector<Expedition> expeditions) {
         return;
     }
 
+    clearScreen();
     cout << "======================================================================================" << endl;
     cout << "Crew Members with Roles of Expedition " << expedition->name << endl;
     cout << "======================================================================================" << endl;
@@ -279,6 +327,7 @@ void searchExpeditions(const vector<Expedition>& expeditions) {
     getline(cin, query);
 
     bool found = false;
+    clearScreen();
     cout << "======================================================================================" << endl;
     cout << "Search Results" << endl;
     cout << "======================================================================================" << endl;
@@ -450,9 +499,17 @@ void loadData(vector<Expedition>& expeditions) {
     }
 }
 
+double calculateDistanceToPlanet(const string& planetName) {
+    for (const Planet& planet : solarSystem) {
+        if (planet.name == planetName) {
+            return planet.distanceFromEarth;
+        }
+    }
+    return -1.0;
+}
+
 double calculateDistance(const Expedition& expedition) {
-    // Placeholder function for distance calculation, replace with actual logic
-    return 1000.0; // Placeholder value
+    return calculateDistanceToPlanet(expedition.destination);
 }
 
 void calculateExpeditionDistance(vector<Expedition>& expeditions) {
@@ -474,8 +531,13 @@ void calculateExpeditionDistance(vector<Expedition>& expeditions) {
     }
 
     double distance = calculateDistance(*expedition);
-    expedition->distance = distance;
-    cout << "Distance calculated for Expedition " << expedition->name << ": " << distance << " units" << endl;
+    if (distance != -1.0) {
+        expedition->distance = distance;
+        cout << "Distance calculated for Expedition " << expedition->name << ": " << distance << " million kilometers" << endl;
+    }
+    else {
+        cout << "Distance to destination planet not available!" << endl;
+    }
 }
 
 int main() {
