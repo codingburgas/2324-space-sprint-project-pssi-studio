@@ -1,37 +1,37 @@
-#include <iostream>
-#include <fstream>
-#include <string>
-#include <vector>
-#include <iomanip>
-#include <algorithm>
+#include <iostream> // For input and output
+#include <fstream> // For file input and output
+#include <string> // For string manipulation
+#include <vector> 
+#include <iomanip> // For formatting output
+#include <algorithm> // For algorithms like remove
 
 #ifdef _WIN32
-#include <windows.h>
+#include <windows.h> // For Windows system commands
 #else
 #include <cstdlib>
 #endif
 
 using namespace std;
 
-// Структура за планета в слънчевата система
+// Structure for a planet in the solar system
 struct Planet {
     string name;
-    double distanceFromEarth; // Разстояние от Земята в милиони километри
+    double distanceFromEarth; // Distance from Earth in millions of kilometers
 };
 
-// Структура за роля на член на екипажа
+// Structure for a crew member role
 struct Role {
     string name;
 };
 
-// Структура за космически кораб
+// Structure for a spaceship option
 struct SpaceshipOption {
     string name;
-    double speed; // Например, скорост в км/ч
-    double capacity; // Например, капацитет на горивния резервоар в литри
+    double speed; // Speed in km/h
+    double capacity; // Capacity of fuel tank in liters
 };
 
-// Списък с планети в слънчевата система
+// List of planets in the solar system
 vector<Planet> solarSystem = {
     {"Mercury", 77.3},
     {"Venus", 38.2},
@@ -43,7 +43,7 @@ vector<Planet> solarSystem = {
     {"Neptune", 4350.0},
 };
 
-// Списък с роли на членовете на екипажа
+// List of crew member roles
 vector<Role> crewRoles = {
     {"Captain"},
     {"Navigator"},
@@ -51,10 +51,10 @@ vector<Role> crewRoles = {
     {"Pilot"},
     {"Medic"},
     {"Scientist"},
-    {"Crew Member"} // Новата роля
+    {"Crew Member"} // Newly added role
 };
 
-// Списък с опции за космически кораби
+// List of spaceship options
 vector<SpaceshipOption> spaceshipOptions = {
     {"Falcon", 100000, 10000},
     {"Starblazer", 120000, 12000},
@@ -64,6 +64,7 @@ vector<SpaceshipOption> spaceshipOptions = {
     {"Stellar Cruiser", 115000, 10000}
 };
 
+// Enumeration for main menu options
 enum MainMenuOptions {
     NEW_EXPEDITION = 1,
     VIEW_EXPEDITIONS,
@@ -80,6 +81,7 @@ enum MainMenuOptions {
     EXIT
 };
 
+// Enumeration for expedition status
 enum ExpeditionStatus {
     PLANNED,
     IN_PROGRESS,
@@ -87,11 +89,13 @@ enum ExpeditionStatus {
     CANCELED
 };
 
+// Structure for a crew member
 struct CrewMember {
     string name;
     string role;
 };
 
+// Structure for an expedition
 struct Expedition {
     int id;
     string name;
@@ -100,11 +104,13 @@ struct Expedition {
     vector<CrewMember> crewMembers;
     double distance;
 
+    // Overloading the equality operator for comparing expeditions
     bool operator==(const Expedition& other) const {
         return id == other.id;
     }
 };
 
+// Function to clear the console screen
 void clearScreen() {
 #ifdef _WIN32
     system("cls");
@@ -113,6 +119,7 @@ void clearScreen() {
 #endif
 }
 
+// Function to display the main menu and get user choice
 int displayMainMenu() {
     clearScreen();
     cout << "======================================================================================" << endl;
@@ -139,6 +146,7 @@ int displayMainMenu() {
     return choice;
 }
 
+// Function to display spaceship options and get user choice
 int displaySpaceshipOptions() {
     clearScreen();
     cout << "======================================================================================" << endl;
@@ -155,6 +163,7 @@ int displaySpaceshipOptions() {
     return choice;
 }
 
+// Function to display planet options and get user choice
 int displayPlanetOptions() {
     clearScreen();
     cout << "======================================================================================" << endl;
@@ -171,6 +180,7 @@ int displayPlanetOptions() {
     return choice;
 }
 
+// Function to create a new expedition
 void createExpedition(vector<Expedition>& expeditions) {
     cout << "Enter expedition name: ";
     cin.ignore();
@@ -189,10 +199,8 @@ void createExpedition(vector<Expedition>& expeditions) {
         return;
     }
 
-    // Променете индекса на планетата тук, за да съответства на индексацията от 0 до N-1
     int planetIndex = planetChoice - 1;
 
-    // Извеждане на избраната дестинация
     cout << "Selected destination planet: " << solarSystem[planetIndex].name << endl;
 
     string destination = solarSystem[planetIndex].name;
@@ -209,7 +217,6 @@ void createExpedition(vector<Expedition>& expeditions) {
     int numCrewMembers;
     cin >> numCrewMembers;
 
-    // Проверка за максимален брой членове на екипажа
     if (numCrewMembers > 15) {
         cout << "Expedition cannot have more than 15 crew members." << endl;
         return;
@@ -244,7 +251,6 @@ void createExpedition(vector<Expedition>& expeditions) {
     expedition.status = expeditionStatus;
     expedition.crewMembers = crewMembers;
 
-    // Изчисляване на разстоянието до дестинацията
     double distance = 0.0;
     for (int i = 0; i < planetIndex; ++i) {
         distance += solarSystem[i].distanceFromEarth;
@@ -256,6 +262,7 @@ void createExpedition(vector<Expedition>& expeditions) {
     cout << "Expedition created successfully!" << endl;
 }
 
+// Function to view all expeditions
 void viewExpeditions(vector<Expedition> expeditions) {
     clearScreen();
     cout << "======================================================================================" << endl;
@@ -287,6 +294,7 @@ void viewExpeditions(vector<Expedition> expeditions) {
     cout << "======================================================================================" << endl;
 }
 
+// Function to edit an existing expedition
 void editExpedition(vector<Expedition>& expeditions) {
     cout << "Enter the ID of the expedition to edit: ";
     int id;
@@ -327,6 +335,7 @@ void editExpedition(vector<Expedition>& expeditions) {
     cout << "Expedition updated successfully!" << endl;
 }
 
+// Function to delete an existing expedition
 void deleteExpedition(vector<Expedition>& expeditions) {
     cout << "Enter the ID of the expedition to delete: ";
     int id;
@@ -350,6 +359,7 @@ void deleteExpedition(vector<Expedition>& expeditions) {
     cout << "Expedition deleted successfully!" << endl;
 }
 
+// Function to view crew members of a specific expedition
 void viewCrewMembers(vector<Expedition> expeditions) {
     cout << "Enter the ID of the expedition to view crew members: ";
     int id;
@@ -379,6 +389,7 @@ void viewCrewMembers(vector<Expedition> expeditions) {
     cout << "======================================================================================" << endl;
 }
 
+// Function to view crew members with their roles of a specific expedition
 void viewCrewMembersWithRoles(vector<Expedition> expeditions) {
     cout << "Enter the ID of the expedition to view crew members with roles: ";
     int id;
@@ -408,6 +419,7 @@ void viewCrewMembersWithRoles(vector<Expedition> expeditions) {
     cout << "======================================================================================" << endl;
 }
 
+// Function to search expeditions by destination
 void searchExpeditions(vector<Expedition> expeditions) {
     cout << "Enter the destination to search for: ";
     string destination;
@@ -429,6 +441,7 @@ void searchExpeditions(vector<Expedition> expeditions) {
     viewExpeditions(matchingExpeditions);
 }
 
+// Function to save expedition data to a file
 void saveData(const vector<Expedition>& expeditions, const string& filename) {
     ofstream file(filename);
     if (file.is_open()) {
@@ -447,6 +460,7 @@ void saveData(const vector<Expedition>& expeditions, const string& filename) {
     }
 }
 
+// Function to add a crew member to an existing expedition
 void addCrewMember(vector<Expedition>& expeditions) {
     cout << "Enter the ID of the expedition to add a crew member: ";
     int id;
@@ -492,6 +506,7 @@ void addCrewMember(vector<Expedition>& expeditions) {
     cout << "Crew member added successfully!" << endl;
 }
 
+// Function to remove a crew member from an existing expedition
 void removeCrewMember(vector<Expedition>& expeditions) {
     cout << "Enter the ID of the expedition to remove a crew member: ";
     int id;
@@ -532,6 +547,7 @@ void removeCrewMember(vector<Expedition>& expeditions) {
     }
 }
 
+// Function to load expedition data from a file
 void loadData(vector<Expedition>& expeditions, const string& filename) {
     expeditions.clear();
 
@@ -583,6 +599,7 @@ void loadData(vector<Expedition>& expeditions, const string& filename) {
     }
 }
 
+// Function to calculate distance to a destination planet
 void calculateDistance() {
     cout << "Enter the ID of the destination planet: ";
     int id;
