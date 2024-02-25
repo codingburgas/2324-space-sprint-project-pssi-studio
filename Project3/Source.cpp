@@ -152,8 +152,10 @@ int displaySpaceshipOptions() {
     cout << "======================================================================================" << endl;
     cout << "Select Spaceship" << endl;
     cout << "======================================================================================" << endl;
+    cout << setw(8) << left << "Option" << setw(21) << left << "Name" << setw(20) << left << "Speed (km/h)" << setw(20) << left << "Fuel Capacity (liters)" << endl;
+    cout << "======================================================================================" << endl;
     for (int i = 0; i < spaceshipOptions.size(); ++i) {
-        cout << i + 1 << ". " << spaceshipOptions[i].name << endl;
+        cout << setw(1) << left << i + 1 << ". " << setw(20) << left << spaceshipOptions[i].name << setw(20) << left << spaceshipOptions[i].speed << setw(20) << left << spaceshipOptions[i].capacity << endl;
     }
     cout << "======================================================================================" << endl;
     cout << "Enter your choice: ";
@@ -419,47 +421,66 @@ void viewCrewMembersWithRoles(vector<Expedition> expeditions) {
     cout << "======================================================================================" << endl;
 }
 
-// Function to search expeditions by destination
+// Function to search for expeditions by destination
 void searchExpeditions(vector<Expedition> expeditions) {
-    cout << "Enter the destination to search for: ";
+    cout << "Enter the destination planet to search for expeditions: ";
     string destination;
     cin.ignore();
     getline(cin, destination);
 
-    vector<Expedition> matchingExpeditions;
+    clearScreen();
+    cout << "======================================================================================" << endl;
+    cout << "Expeditions to " << destination << endl;
+    cout << "======================================================================================" << endl;
+    cout << "ID\tName\tDestination\tStatus" << endl;
     for (Expedition expedition : expeditions) {
         if (expedition.destination == destination) {
-            matchingExpeditions.push_back(expedition);
+            cout << expedition.id << "\t" << expedition.name << "\t" << expedition.destination << "\t";
+
+            string status;
+            switch (expedition.status) {
+            case PLANNED:
+                status = "Planned";
+                break;
+            case IN_PROGRESS:
+                status = "In Progress";
+                break;
+            case COMPLETED:
+                status = "Completed";
+                break;
+            case CANCELED:
+                status = "Canceled";
+                break;
+            }
+
+            cout << status << endl;
         }
     }
 
-    if (matchingExpeditions.empty()) {
-        cout << "No expeditions found for the destination: " << destination << endl;
+    cout << "======================================================================================" << endl;
+}
+
+// Function to save data to a file
+void saveData(vector<Expedition> expeditions) {
+    ofstream outFile("expeditions.txt");
+
+    if (!outFile.is_open()) {
+        cout << "Failed to open file for writing!" << endl;
         return;
     }
 
-    viewExpeditions(matchingExpeditions);
-}
-
-// Function to save expedition data to a file
-void saveData(const vector<Expedition>& expeditions, const string& filename) {
-    ofstream file(filename);
-    if (file.is_open()) {
-        for (const Expedition& expedition : expeditions) {
-            file << expedition.id << "," << expedition.name << "," << expedition.destination << "," << expedition.status << ",";
-            for (const CrewMember& crewMember : expedition.crewMembers) {
-                file << crewMember.name << ":" << crewMember.role << ";";
-            }
-            file << endl;
+    for (Expedition expedition : expeditions) {
+        outFile << expedition.id << "," << expedition.name << "," << expedition.destination << "," << expedition.status << "," << expedition.distance << endl;
+        for (CrewMember crewMember : expedition.crewMembers) {
+            outFile << crewMember.name << "," << crewMember.role << endl;
         }
-        file.close();
-        cout << "Data saved successfully!" << endl;
+        outFile << "END_CREW" << endl;
     }
-    else {
-        cout << "Unable to open file: " << filename << endl;
-    }
-}
 
+    outFile.close();
+
+    cout << "Data saved successfully!" << endl;
+}
 // Function to add a crew member to an existing expedition
 void addCrewMember(vector<Expedition>& expeditions) {
     cout << "Enter the ID of the expedition to add a crew member: ";
@@ -547,79 +568,93 @@ void removeCrewMember(vector<Expedition>& expeditions) {
     }
 }
 
-// Function to load expedition data from a file
-void loadData(vector<Expedition>& expeditions, const string& filename) {
-    expeditions.clear();
+// Function to load data from a file
+void loadData(vector<Expedition>& expeditions) {
+    ifstream inFile("expeditions.txt");
 
-    ifstream file(filename);
-    if (file.is_open()) {
-        string line;
-        while (getline(file, line)) {
-            Expedition expedition;
-            size_t pos = 0;
-            string token;
-            while ((pos = line.find(",")) != string::npos) {
-                token = line.substr(0, pos);
-                expedition.id = stoi(token);
-                line.erase(0, pos + 1);
-
-                pos = line.find(",");
-                token = line.substr(0, pos);
-                expedition.name = token;
-                line.erase(0, pos + 1);
-
-                pos = line.find(",");
-                token = line.substr(0, pos);
-                expedition.destination = token;
-                line.erase(0, pos + 1);
-
-                pos = line.find(",");
-                token = line.substr(0, pos);
-                expedition.status = static_cast<ExpeditionStatus>(stoi(token));
-                line.erase(0, pos + 1);
-
-                pos = line.find(";");
-                while ((pos = line.find(";")) != string::npos) {
-                    CrewMember crewMember;
-                    token = line.substr(0, pos);
-                    size_t colonPos = token.find(":");
-                    crewMember.name = token.substr(0, colonPos);
-                    crewMember.role = token.substr(colonPos + 1);
-                    expedition.crewMembers.push_back(crewMember);
-                    line.erase(0, pos + 1);
-                }
-            }
-            expeditions.push_back(expedition);
-        }
-        file.close();
-        cout << "Data loaded successfully!" << endl;
-    }
-    else {
-        cout << "Unable to open file: " << filename << endl;
-    }
-}
-
-// Function to calculate distance to a destination planet
-void calculateDistance() {
-    cout << "Enter the ID of the destination planet: ";
-    int id;
-    cin >> id;
-
-    // Check if the entered ID is valid
-    if (id < 1 || id > solarSystem.size()) {
-        cout << "Invalid planet ID!" << endl;
+    if (!inFile.is_open()) {
+        cout << "No existing data found." << endl;
         return;
     }
 
-    // Change the index of the planet to match indexing from 0 to N-1
-    int planetIndex = id - 1;
+    expeditions.clear();
 
-    // Display distance to the destination planet
-    cout << "Distance to the destination planet " << solarSystem[planetIndex].name << ": " << solarSystem[planetIndex].distanceFromEarth << " million kilometers" << endl;
+    string line;
+    while (getline(inFile, line)) {
+        Expedition expedition;
+        size_t pos = 0;
+        string token;
+        while ((pos = line.find(",")) != string::npos) {
+            token = line.substr(0, pos);
+            expedition.id = stoi(token);
+            line.erase(0, pos + 1);
+
+            pos = line.find(",");
+            token = line.substr(0, pos);
+            expedition.name = token;
+            line.erase(0, pos + 1);
+
+            pos = line.find(",");
+            token = line.substr(0, pos);
+            expedition.destination = token;
+            line.erase(0, pos + 1);
+
+            pos = line.find(",");
+            token = line.substr(0, pos);
+            expedition.status = static_cast<ExpeditionStatus>(stoi(token));
+            line.erase(0, pos + 1);
+
+            pos = line.find(",");
+            token = line.substr(0, pos);
+            expedition.distance = stod(token);
+            line.erase(0, pos + 1);
+        }
+
+        while (getline(inFile, line)) {
+            if (line == "END_CREW") {
+                break;
+            }
+            CrewMember crewMember;
+            pos = line.find(",");
+            crewMember.name = line.substr(0, pos);
+            line.erase(0, pos + 1);
+
+            pos = line.find(",");
+            crewMember.role = line.substr(0, pos);
+            line.erase(0, pos + 1);
+
+            expedition.crewMembers.push_back(crewMember);
+        }
+
+        expeditions.push_back(expedition);
+    }
+
+    inFile.close();
+
+    cout << "Data loaded successfully!" << endl;
+}
+
+// Function to calculate the distance to a specific destination planet
+void calculateDistanceToPlanet() {
+    int planetChoice = displayPlanetOptions();
+    if (planetChoice < 1 || planetChoice > solarSystem.size()) {
+        cout << "Invalid planet choice!" << endl;
+        return;
+    }
+
+    int planetIndex = planetChoice - 1;
+    double distance = 0.0;
+    for (int i = 0; i < planetIndex; ++i) {
+        distance += solarSystem[i].distanceFromEarth;
+    }
+
+    cout << "Distance to " << solarSystem[planetIndex].name << ": " << distance << " million kilometers" << endl;
 }
 
 int main() {
     vector<Expedition> expeditions;
+
+    loadData(expeditions);
 
     int choice;
     do {
@@ -654,25 +689,27 @@ int main() {
             searchExpeditions(expeditions);
             break;
         case SAVE_DATA:
-            saveData(expeditions, "expeditions.csv");
+            saveData(expeditions);
             break;
         case LOAD_DATA:
-            loadData(expeditions, "expeditions.csv");
+            loadData(expeditions);
             break;
         case CALCULATE_DISTANCE:
-            calculateDistance();
+            calculateDistanceToPlanet();
             break;
         case EXIT:
-            cout << "Exiting program..." << endl;
+            cout << "Exiting program." << endl;
             break;
         default:
-            cout << "Invalid choice! Please enter a number between 1 and 13." << endl;
+            cout << "Invalid choice!" << endl;
             break;
         }
 
-        cout << "Press Enter to continue...";
-        cin.ignore();
-        cin.get();
+        if (choice != EXIT) {
+            cout << "Press Enter to continue...";
+            cin.ignore();
+            cin.get();
+        }
     } while (choice != EXIT);
 
     return 0;
