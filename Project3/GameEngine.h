@@ -31,8 +31,8 @@ private:
     sf::RectangleShape background1;
     sf::RectangleShape background2;
     sf::RectangleShape expeditionBackground;
-    sf::RectangleShape newExpeditionButton, loadExpeditionButton, CrewButton;
-    sf::Texture expeditionBackgroundTexture, newExpeditionButtonTexture, loadExpeditionButtonTexture, CrewButtonTexture;
+    sf::RectangleShape newExpeditionButton, CrewButton;
+    sf::Texture expeditionBackgroundTexture, newExpeditionButtonTexture, CrewButtonTexture;
     sf::Texture expeditionTitleTexture;
     sf::RectangleShape expeditionTitleShape;
     sf::RectangleShape spaceShip;
@@ -43,6 +43,17 @@ private:
     sf::Texture bigPlanetTexture;
     sf::RectangleShape homeButton;
     sf::Texture homeButtonTexture;
+    sf::Texture spaceShipATexture; // New
+    sf::Texture spaceShipBTexture; // New
+    sf::Texture spaceShipCTexture; // New
+    sf::RectangleShape spaceShipAButton; // New
+    sf::RectangleShape spaceShipBButton; // New
+    sf::RectangleShape spaceShipCButton; // New
+    sf::Texture crewSelectionBackgroundTexture;
+    sf::Sprite crewSelectionBackground; // or sf::RectangleShape if you prefer
+    sf::Texture backButtonTexture;
+    sf::RectangleShape backButton;
+
 
 
     sf::Clock clock;
@@ -67,7 +78,7 @@ private:
     sf::RectangleShape popupBackground;
     std::vector<sf::Text> crewOptions;
     sf::Font font;
-    //Those too (Don't touch)
+
     std::vector<std::string> roles = { "Space Ship", "Captain", "Repairman", "Navigator", "Engineer" };
     std::map<std::string, std::vector<std::string>> crewMembers;
     bool showCongratulationsScreen = false;
@@ -88,7 +99,8 @@ private:
 
     float backgroundMoveSpeed = 10.0f;
     float backgroundOffset = 0.0f;
-   
+    bool playButtonRemoved = false; // Add this line
+
     bool playButtonAnimationActive = false;
     float playButtonAnimationTime = 0.0f;
     float playButtonOpacity = 0.0f;
@@ -120,7 +132,6 @@ private:
     void resetGameState();
     void handleContinueButtonClick();
     void handleHomeButtonClick();
-    //Those will be used on a later state!!! (Don't remove)
     void showCrewSelection();
     void selectCrewMember(const sf::Vector2f& mousePos);
     void initializeCrewMembers();

@@ -35,8 +35,9 @@ void GameEngine::processEvents() {
                     std::cout << "Exit Button Clicked" << std::endl;
                     window.close();
                 }
-                if (mainMenuActive && playButton.getGlobalBounds().contains(worldPos)) {
+                if (playButton.getGlobalBounds().contains(worldPos) && !playButtonRemoved) {
                     std::cout << "Play Button Clicked" << std::endl;
+                    playButtonRemoved = true; // Set the flag here
                     expeditionScreenActive = true;
                     mainMenuActive = false;
                     logoVisible = false;
@@ -58,7 +59,30 @@ void GameEngine::processEvents() {
                 }
                 if (CrewButton.getGlobalBounds().contains(worldPos)) {
                     crewSelectionScreenActive = !crewSelectionScreenActive;
+                    expeditionScreenActive = false;
+                    crewSelectionScreenActive = true;
+
                 }
+                if (spaceShipAButton.getGlobalBounds().contains(worldPos)) {
+                    std::cout << "SpaceShipA Button Clicked" << std::endl;
+                    // Handle SpaceShipA selection
+                }
+                if (spaceShipBButton.getGlobalBounds().contains(worldPos)) {
+                    std::cout << "SpaceShipB Button Clicked" << std::endl;
+                    // Handle SpaceShipB selection
+                }
+                if (spaceShipCButton.getGlobalBounds().contains(worldPos)) {
+                    std::cout << "SpaceShipC Button Clicked" << std::endl;
+                    // Handle SpaceShipC selection
+                }
+                if (backButton.getGlobalBounds().contains(worldPos)) {
+                    std::cout << "Back Button Clicked" << std::endl;
+                    crewSelectionScreenActive = false;
+                    expeditionScreenActive = true;
+                    playButtonAnimationActive = false;
+                }
+
+
             }
             break;
         }
@@ -77,7 +101,7 @@ void GameEngine::update() {
 
         if (startingPhase) {
             startingPhaseTimer += deltaTime;
-            if (startingPhaseTimer >= 5.0f) { 
+            if (startingPhaseTimer >= 5.0f) {
                 startingPhase = false;
             }
         }
@@ -177,19 +201,33 @@ void GameEngine::render() {
     window.draw(background2);
     window.draw(exitButton);
 
+    if (!playButtonRemoved && mainMenuActive) {
+        window.draw(playButton);
+    }
+
     if (showCongratulationsScreen) {
         window.draw(congratulationsSprite);
 
         window.draw(continueButton);
-        window.draw(homeButton); 
+        window.draw(homeButton);
     }
-
     if (crewSelectionScreenActive) {
-        window.draw(popupBackground);
-        for (auto& option : crewOptions) {
-            window.draw(option);
+        window.draw(crewSelectionBackground);
+        window.draw(spaceShipAButton);
+        window.draw(spaceShipBButton);
+        window.draw(spaceShipCButton);
+        window.draw(backButton);
+    } else {
+        // Render expedition screen components only when the crew selection screen is not active
+        if (expeditionScreenActive) {
+            window.draw(expeditionBackground);
+            window.draw(expeditionTitleShape);
+            window.draw(newExpeditionButton);
+            window.draw(CrewButton);
         }
     }
+
+
 
     if (spaceGameActive) {
         if (startingPhase) {
@@ -214,7 +252,6 @@ void GameEngine::render() {
             window.draw(expeditionBackground);
             window.draw(expeditionTitleShape);
             window.draw(newExpeditionButton);
-            window.draw(loadExpeditionButton);
             window.draw(CrewButton);
         }
         else {
@@ -225,9 +262,6 @@ void GameEngine::render() {
 
             if (StudioTextPopped) {
                 window.draw(StudioText);
-            }
-            if (mainMenuActive) {
-                window.draw(playButton);
             }
         }
     }
@@ -282,7 +316,6 @@ void GameEngine::loadContent() {
         std::cerr << "Could not load expedition title texture" << std::endl;
     }
     if (!newExpeditionButtonTexture.loadFromFile("Textures/NewExpeditionButton.png") ||
-        !loadExpeditionButtonTexture.loadFromFile("Textures/LoadExpeditionButton.png") ||
         !CrewButtonTexture.loadFromFile("Textures/CrewButton.png")) {
         std::cerr << "Could not load one or more button textures" << std::endl;
     }
@@ -307,6 +340,19 @@ void GameEngine::loadContent() {
     if (!homeButtonTexture.loadFromFile("Textures/HomeButton.png")) {
         std::cerr << "Could not load Home Button texture" << std::endl;
     }
+    if (!spaceShipATexture.loadFromFile("Textures/SpaceShipA.png")) {
+        std::cerr << "Could not load SpaceShipA texture" << std::endl;
+    }
+    if (!spaceShipBTexture.loadFromFile("Textures/SpaceShipB.png")) {
+        std::cerr << "Could not load SpaceShipB texture" << std::endl;
+    }
+    if (!spaceShipCTexture.loadFromFile("Textures/SpaceShipC.png")) {
+        std::cerr << "Could not load SpaceShipC texture" << std::endl;
+    }
+    if (!crewSelectionBackgroundTexture.loadFromFile("Textures/CrewSelectionBackground.jpg")) {
+        std::cerr << "Could not load Crew Selection background texture" << std::endl;
+    }
+
 
 }
 
@@ -341,15 +387,54 @@ void GameEngine::initializeUI() {
     background2.setSize(sf::Vector2f(screenWidth, screenHeight));
     background2.setPosition(screenWidth, 0);
 
-    // Initialize Popup Window for Crew Selection
-    popupBackground.setSize(sf::Vector2f(300.f, 400.f));
-    popupBackground.setFillColor(sf::Color(0, 0, 0, 200));
-    popupBackground.setPosition((screenWidth - popupBackground.getSize().x) / 2,
-        (screenHeight - popupBackground.getSize().y) / 2);
+    spaceShipAButton.setTexture(&spaceShipATexture);
+    spaceShipBButton.setTexture(&spaceShipBTexture);
+    spaceShipCButton.setTexture(&spaceShipCTexture);
 
-    font.loadFromFile("Fonts/Crewpopup.ttf");
 
-    initializeCrewMembers();
+    // Assuming CrewButton is already positioned, place these below it
+    float baseX = CrewButton.getPosition().x;
+    float baseY = CrewButton.getPosition().y + CrewButton.getSize().y + 50; // Adjust Y offset as needed
+
+
+    sf::FloatRect backgroundBounds = crewSelectionBackground.getGlobalBounds();
+
+
+    // Assuming screenWidth and screenHeight represent the dimensions of the window or the dimensions of the full-screen background
+    float buttonWidth = 150.f;  // The width of each button
+    float buttonHeight = 250.f;  // The height of each button
+    float spacing = 20.f;  // Spacing between buttons
+
+    // Calculate the total width needed to display all buttons side by side with spacing
+    float totalWidth = 3 * buttonWidth + 2 * spacing;
+
+    // Calculate the starting X position to center the buttons group horizontally
+    float startX = (screenWidth - totalWidth) / 2;
+
+    // Calculate the starting Y position to center the buttons group vertically
+    // You might want to adjust this calculation based on your specific UI layout
+    float startY = (screenHeight - buttonHeight) / 2;
+
+    // Set the positions of your buttons using startX and startY
+    spaceShipAButton.setSize(sf::Vector2f(buttonWidth, buttonHeight));
+    spaceShipAButton.setPosition(startX, startY);
+
+    spaceShipBButton.setSize(sf::Vector2f(buttonWidth, buttonHeight));
+    spaceShipBButton.setPosition(startX + buttonWidth + spacing, startY);
+
+    spaceShipCButton.setSize(sf::Vector2f(buttonWidth, buttonHeight));
+    spaceShipCButton.setPosition(startX + 2 * (buttonWidth + spacing), startY);
+
+    // Adjust the crewSelectionBackground to cover the entire window or to the desired size
+    
+    crewSelectionBackground.setTexture(crewSelectionBackgroundTexture);
+    crewSelectionBackground.setPosition((screenWidth - crewSelectionBackground.getGlobalBounds().width) / 2, (screenHeight - crewSelectionBackground.getGlobalBounds().height) / 2);
+
+
+    backButton.setTexture(&backButtonTexture);
+    backButton.setSize(sf::Vector2f(150.f, 50.f)); // Adjust size as needed
+    // Position the button at the bottom center of the crew selection screen
+    backButton.setPosition(screenWidth / 2 - backButton.getSize().x / 2, crewSelectionBackground.getPosition().y + crewSelectionBackground.getGlobalBounds().height - backButton.getSize().y - 20);
 
 }
 
@@ -368,7 +453,6 @@ void GameEngine::initializeExpeditionUI() {
 
 
     newExpeditionButton.setTexture(&newExpeditionButtonTexture);
-    loadExpeditionButton.setTexture(&loadExpeditionButtonTexture);
     CrewButton.setTexture(&CrewButtonTexture);
 
     float buttonWidth = 400.f;
@@ -376,14 +460,12 @@ void GameEngine::initializeExpeditionUI() {
     float spacing = 40.f;
 
     newExpeditionButton.setSize(sf::Vector2f(buttonWidth, buttonHeight));
-    loadExpeditionButton.setSize(sf::Vector2f(buttonWidth, buttonHeight));
     CrewButton.setSize(sf::Vector2f(buttonWidth, buttonHeight));
 
     float startX = screenWidth / 2.f - buttonWidth / 2.f;
     float startY = screenHeight / 2.f - (1.5f * buttonHeight + spacing);
 
     newExpeditionButton.setPosition(startX, startY);
-    loadExpeditionButton.setPosition(startX, startY + buttonHeight + spacing);
     CrewButton.setPosition(startX, startY + 2 * (buttonHeight + spacing));
 }
 
@@ -529,7 +611,7 @@ void GameEngine::handleHomeButtonClick() {
     showCongratulationsScreen = false;
     expeditionScreenActive = true;
     spaceGameActive = false;
- 
+
 }
 
 void GameEngine::initializeCrewMembers() {
