@@ -605,16 +605,19 @@ void calculateDistance() {
     int id;
     cin >> id;
 
+    // Check if the entered ID is valid
     if (id < 1 || id > solarSystem.size()) {
         cout << "Invalid planet ID!" << endl;
         return;
     }
 
+    // Change the index of the planet to match indexing from 0 to N-1
     int planetIndex = id - 1;
 
-    double distance = solarSystem[planetIndex].distanceFromEarth;
-    cout << "Distance to the destination planet " << solarSystem[planetIndex].name << ": " << distance << " million kilometers" << endl;
+    // Display distance to the destination planet
+    cout << "Distance to the destination planet " << solarSystem[planetIndex].name << ": " << solarSystem[planetIndex].distanceFromEarth << " million kilometers" << endl;
 }
+
 int main() {
     vector<Expedition> expeditions;
 
