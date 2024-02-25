@@ -45,7 +45,6 @@ private:
     sf::Texture homeButtonTexture;
 
 
-
     sf::Clock clock;
 
     sf::Vector2f logoStartPosition;
@@ -68,7 +67,7 @@ private:
     sf::RectangleShape popupBackground;
     std::vector<sf::Text> crewOptions;
     sf::Font font;
-
+    //Those too (Don't touch)
     std::vector<std::string> roles = { "Space Ship", "Captain", "Repairman", "Navigator", "Engineer" };
     std::map<std::string, std::vector<std::string>> crewMembers;
     bool showCongratulationsScreen = false;
@@ -121,6 +120,7 @@ private:
     void resetGameState();
     void handleContinueButtonClick();
     void handleHomeButtonClick();
+    //Those will be used on a later state!!! (Don't remove)
     void showCrewSelection();
     void selectCrewMember(const sf::Vector2f& mousePos);
     void initializeCrewMembers();
