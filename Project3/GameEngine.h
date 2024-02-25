@@ -43,14 +43,14 @@ private:
     sf::Texture bigPlanetTexture;
     sf::RectangleShape homeButton;
     sf::Texture homeButtonTexture;
-    sf::Texture spaceShipATexture; // New
-    sf::Texture spaceShipBTexture; // New
-    sf::Texture spaceShipCTexture; // New
-    sf::RectangleShape spaceShipAButton; // New
-    sf::RectangleShape spaceShipBButton; // New
-    sf::RectangleShape spaceShipCButton; // New
+    sf::Texture spaceShipATexture;
+    sf::Texture spaceShipBTexture;
+    sf::Texture spaceShipCTexture;
+    sf::RectangleShape spaceShipAButton;
+    sf::RectangleShape spaceShipBButton;
+    sf::RectangleShape spaceShipCButton;
     sf::Texture crewSelectionBackgroundTexture;
-    sf::Sprite crewSelectionBackground; // or sf::RectangleShape if you prefer
+    sf::Sprite crewSelectionBackground;
     sf::Texture backButtonTexture;
     sf::RectangleShape backButton;
 
@@ -99,7 +99,7 @@ private:
 
     float backgroundMoveSpeed = 10.0f;
     float backgroundOffset = 0.0f;
-    bool playButtonRemoved = false; // Add this line
+    bool playButtonRemoved = false;
 
     bool playButtonAnimationActive = false;
     float playButtonAnimationTime = 0.0f;
@@ -132,8 +132,6 @@ private:
     void resetGameState();
     void handleContinueButtonClick();
     void handleHomeButtonClick();
-    void showCrewSelection();
-    void selectCrewMember(const sf::Vector2f& mousePos);
     void initializeCrewMembers();
 
 };
