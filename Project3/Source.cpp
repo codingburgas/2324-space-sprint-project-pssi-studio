@@ -593,10 +593,11 @@ void calculateDistance() {
         return;
     }
 
-    double distance = solarSystem[id - 1].distanceFromEarth;
-    cout << "Distance to the destination planet " << solarSystem[id - 1].name << ": " << distance << " million kilometers" << endl;
-}
+    int planetIndex = id - 1;
 
+    double distance = solarSystem[planetIndex].distanceFromEarth;
+    cout << "Distance to the destination planet " << solarSystem[planetIndex].name << ": " << distance << " million kilometers" << endl;
+}
 int main() {
     vector<Expedition> expeditions;
 
