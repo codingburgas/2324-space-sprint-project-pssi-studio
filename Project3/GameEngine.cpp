@@ -3,7 +3,7 @@
 #include "GameEngine.h"
 #include <iostream>
 
-GameEngine::GameEngine() : window(sf::VideoMode::getDesktopMode(), "SFML Application", sf::Style::Fullscreen),screenWidth(sf::VideoMode::getDesktopMode().width),screenHeight(sf::VideoMode::getDesktopMode().height) {
+GameEngine::GameEngine() : window(sf::VideoMode::getDesktopMode(), "SFML Application", sf::Style::Fullscreen), screenWidth(sf::VideoMode::getDesktopMode().width), screenHeight(sf::VideoMode::getDesktopMode().height) {
     window.setFramerateLimit(60);
     logoVisible = true;
     loadContent();
@@ -21,7 +21,6 @@ void GameEngine::run() {
 }
 
 void GameEngine::processEvents() {
-    //Used to control events such as clicking buttons for now!
     sf::Event event;
     while (window.pollEvent(event)) {
         switch (event.type) {
@@ -43,6 +42,23 @@ void GameEngine::processEvents() {
                     logoVisible = false;
                     initializeExpeditionUI();
                 }
+                if (newExpeditionButton.getGlobalBounds().contains(worldPos)) {
+                    std::cout << "New Expedition Button Clicked" << std::endl;
+                    spaceGameActive = true;
+                    expeditionScreenActive = false;
+                    resetGameState();
+                    initializeSpaceGame();
+                }
+                if (showCongratulationsScreen && continueButton.getGlobalBounds().contains(worldPos.x, worldPos.y)) {
+                    handleContinueButtonClick();
+                }
+
+                if (showCongratulationsScreen && homeButton.getGlobalBounds().contains(worldPos.x, worldPos.y)) {
+                    handleHomeButtonClick();
+                }
+                if (CrewButton.getGlobalBounds().contains(worldPos)) {
+                    crewSelectionScreenActive = !crewSelectionScreenActive;
+                }
             }
             break;
         }
@@ -50,12 +66,65 @@ void GameEngine::processEvents() {
 }
 
 
-
-
 void GameEngine::update() {
     //Used to update the game state!
     float deltaTime = clock.restart().asSeconds();
+
     animateLogo(deltaTime);
+
+    if (spaceGameActive && !gameEnded) {
+        gameSessionTimer += deltaTime;
+
+        if (startingPhase) {
+            startingPhaseTimer += deltaTime;
+            if (startingPhaseTimer >= 5.0f) { 
+                startingPhase = false;
+            }
+        }
+        else {
+            updateMeteors(deltaTime);
+        }
+        // I set that timer to 10 seconds for testing purposes ! It should be set back to 60 after the test!
+        if (gameSessionTimer >= 10.0f) {
+            gameEnded = true;
+        }
+
+        float moveSpeed = 200 * deltaTime;
+
+        if (sf::Keyboard::isKeyPressed(sf::Keyboard::Left) || sf::Keyboard::isKeyPressed(sf::Keyboard::A)) {
+            if (spaceShip.getPosition().x > 0) {
+                spaceShip.move(-moveSpeed, 0);
+            }
+        }
+        if (sf::Keyboard::isKeyPressed(sf::Keyboard::Right) || sf::Keyboard::isKeyPressed(sf::Keyboard::D)) {
+            float rightEdge = window.getSize().x - spaceShip.getSize().x;
+            if (spaceShip.getPosition().x < rightEdge) {
+                spaceShip.move(moveSpeed, 0);
+            }
+        }
+
+        if (sf::Keyboard::isKeyPressed(sf::Keyboard::Up) || sf::Keyboard::isKeyPressed(sf::Keyboard::W)) {
+            if (spaceShip.getPosition().y > 0) {
+                spaceShip.move(0, -moveSpeed);
+            }
+        }
+        if (sf::Keyboard::isKeyPressed(sf::Keyboard::Down) || sf::Keyboard::isKeyPressed(sf::Keyboard::S)) {
+            float bottomEdge = window.getSize().y - spaceShip.getSize().y;
+            if (spaceShip.getPosition().y < bottomEdge) {
+                spaceShip.move(0, moveSpeed);
+            }
+        }
+
+        if (!startingPhase) {
+            checkCollisions();
+        }
+
+        if (gameEnded && !showCongratulationsScreen) {
+            if (!spaceshipLanded) {
+                showCongratulationsScreen = true;
+            }
+        }
+    }
 
     if (logoAnimationActive) {
         logoAnimationTime += deltaTime;
@@ -108,24 +177,58 @@ void GameEngine::render() {
     window.draw(background2);
     window.draw(exitButton);
 
-    if (expeditionScreenActive) {
-        window.draw(expeditionBackground);
-        window.draw(expeditionTitleShape);
-        window.draw(newExpeditionButton);
-        window.draw(loadExpeditionButton);
-        window.draw(oldExpeditionsButton);
+    if (showCongratulationsScreen) {
+        window.draw(congratulationsSprite);
+
+        window.draw(continueButton);
+        window.draw(homeButton); 
     }
-    else {
-        if (logoVisible) {
-            window.draw(logo);
+
+    if (crewSelectionScreenActive) {
+        window.draw(popupBackground);
+        for (auto& option : crewOptions) {
+            window.draw(option);
+        }
+    }
+
+    if (spaceGameActive) {
+        if (startingPhase) {
+            window.draw(earth);
+        }
+        else {
+            if (!gameEnded) {
+                for (auto& meteor : meteors) {
+                    window.draw(meteor);
+                }
+            }
+            window.draw(spaceShip);
         }
 
-
-        if (StudioTextPopped) {
-            window.draw(StudioText);
+        if (gameEnded && spaceshipLanded) {
+            window.draw(bigPlanet);
         }
-        if (mainMenuActive) {
-            window.draw(playButton);
+    }
+    else
+    {
+        if (expeditionScreenActive) {
+            window.draw(expeditionBackground);
+            window.draw(expeditionTitleShape);
+            window.draw(newExpeditionButton);
+            window.draw(loadExpeditionButton);
+            window.draw(CrewButton);
+        }
+        else {
+            if (logoVisible) {
+                window.draw(logo);
+            }
+
+
+            if (StudioTextPopped) {
+                window.draw(StudioText);
+            }
+            if (mainMenuActive) {
+                window.draw(playButton);
+            }
         }
     }
 
@@ -180,9 +283,31 @@ void GameEngine::loadContent() {
     }
     if (!newExpeditionButtonTexture.loadFromFile("Textures/NewExpeditionButton.png") ||
         !loadExpeditionButtonTexture.loadFromFile("Textures/LoadExpeditionButton.png") ||
-        !oldExpeditionsButtonTexture.loadFromFile("Textures/OldExpeditionsButton.png")) {
+        !CrewButtonTexture.loadFromFile("Textures/CrewButton.png")) {
         std::cerr << "Could not load one or more button textures" << std::endl;
     }
+    if (!spaceShipTexture.loadFromFile("Textures/SpaceShip.png")) {
+        std::cerr << "Could not load space ship texture" << std::endl;
+    }
+    if (!meteorTexture.loadFromFile("Textures/Meteor.png")) {
+        std::cerr << "Could not load meteor texture" << std::endl;
+    }
+    if (!secondPlanetTexture.loadFromFile("Textures/SecondPlanet.png")) {
+        std::cerr << "Could not load Second Planet texture" << std::endl;
+    }
+    if (!congratulationsTexture.loadFromFile("Textures/Congratulations.png")) {
+        std::cerr << "Could not load Congratulations texture" << std::endl;
+    }
+    congratulationsSprite.setTexture(congratulationsTexture);
+
+    if (!continueButtonTexture.loadFromFile("Textures/ContinueButton.png")) {
+        std::cerr << "Could not load Continue Button texture" << std::endl;
+    }
+    continueButton.setTexture(&continueButtonTexture);
+    if (!homeButtonTexture.loadFromFile("Textures/HomeButton.png")) {
+        std::cerr << "Could not load Home Button texture" << std::endl;
+    }
+
 }
 
 void GameEngine::initializeUI() {
@@ -216,6 +341,16 @@ void GameEngine::initializeUI() {
     background2.setSize(sf::Vector2f(screenWidth, screenHeight));
     background2.setPosition(screenWidth, 0);
 
+    // Initialize Popup Window for Crew Selection
+    popupBackground.setSize(sf::Vector2f(300.f, 400.f));
+    popupBackground.setFillColor(sf::Color(0, 0, 0, 200));
+    popupBackground.setPosition((screenWidth - popupBackground.getSize().x) / 2,
+        (screenHeight - popupBackground.getSize().y) / 2);
+
+    font.loadFromFile("Fonts/Crewpopup.ttf");
+
+    initializeCrewMembers();
+
 }
 
 void GameEngine::initializeExpeditionUI() {
@@ -226,33 +361,89 @@ void GameEngine::initializeExpeditionUI() {
         (screenHeight / 2.f) - (expeditionBackground.getSize().y / 2.f)
     );
 
-    // Initialize the title shape with texture
-    expeditionTitleShape.setTexture(&expeditionTitleTexture); // Use the corrected member name
+    expeditionTitleShape.setTexture(&expeditionTitleTexture);
     expeditionTitleShape.setSize(sf::Vector2f(500.f, 200.f));
     expeditionTitleShape.setPosition(screenWidth / 2.f - expeditionTitleShape.getSize().x / 2.f,
         screenHeight / 2.f - expeditionBackground.getSize().y / 2.f - 220.f);
 
-    // Initialize buttons
+
     newExpeditionButton.setTexture(&newExpeditionButtonTexture);
     loadExpeditionButton.setTexture(&loadExpeditionButtonTexture);
-    oldExpeditionsButton.setTexture(&oldExpeditionsButtonTexture);
+    CrewButton.setTexture(&CrewButtonTexture);
 
     float buttonWidth = 400.f;
     float buttonHeight = 150.f;
-    float spacing = 40.f; // Spacing between buttons
+    float spacing = 40.f;
 
-    // Set sizes and initial positions (you might adjust these positions based on your UI layout)
     newExpeditionButton.setSize(sf::Vector2f(buttonWidth, buttonHeight));
     loadExpeditionButton.setSize(sf::Vector2f(buttonWidth, buttonHeight));
-    oldExpeditionsButton.setSize(sf::Vector2f(buttonWidth, buttonHeight));
+    CrewButton.setSize(sf::Vector2f(buttonWidth, buttonHeight));
 
-    // Position buttons in a column within the expedition background
     float startX = screenWidth / 2.f - buttonWidth / 2.f;
-    float startY = screenHeight / 2.f - (1.5f * buttonHeight + spacing); // Adjust startY as needed to center the buttons
+    float startY = screenHeight / 2.f - (1.5f * buttonHeight + spacing);
 
     newExpeditionButton.setPosition(startX, startY);
     loadExpeditionButton.setPosition(startX, startY + buttonHeight + spacing);
-    oldExpeditionsButton.setPosition(startX, startY + 2 * (buttonHeight + spacing));
+    CrewButton.setPosition(startX, startY + 2 * (buttonHeight + spacing));
+}
+
+void GameEngine::initializeSpaceGame() {
+    spaceShip.setTexture(&spaceShipTexture);
+    spaceShip.setSize(sf::Vector2f(100.f, 100.f));
+    spaceShip.setPosition(screenWidth / 2 - spaceShip.getSize().x / 2, screenHeight - spaceShip.getSize().y - 450);
+    meteors.clear();
+    meteorSpawnTimer = 0.0f;
+    gameSessionTimer = 0.0f;
+    gameEnded = false;
+
+    // Load and set up the big planet texture (in that case this is unused for the moment!)
+    bigPlanet.setTexture(&bigPlanetTexture);
+    bigPlanet.setSize(sf::Vector2f(300.f, 300.f));
+    bigPlanet.setPosition(screenWidth / 2 - bigPlanet.getSize().x / 2, screenHeight / 2 - bigPlanet.getSize().y / 2);
+
+    if (!earthTexture.loadFromFile("Textures/Earth.png")) {
+        std::cerr << "Could not load Earth texture" << std::endl;
+    }
+    earth.setTexture(&earthTexture);
+    earth.setSize(sf::Vector2f(6000.f, 3000.f));
+    earth.setPosition(screenWidth / 2 - earth.getSize().x / 2, screenHeight - earth.getSize().y + 2750);
+    startingPhase = true;
+    startingPhaseTimer = 0.0f;
+
+    continueButton.setTexture(&continueButtonTexture);
+    continueButton.setSize(sf::Vector2f(400, 200));
+    continueButton.setPosition(screenWidth / 2 - continueButton.getSize().x / 2, screenHeight * 0.75);
+
+    homeButton.setTexture(&homeButtonTexture);
+    homeButton.setSize(sf::Vector2f(400, 200));
+    homeButton.setPosition(screenWidth / 2 - homeButton.getSize().x / 3, continueButton.getPosition().y + continueButton.getSize().y + 10);
+}
+
+void GameEngine::updateMeteors(float deltaTime) {
+    meteorSpawnTimer += deltaTime;
+    if (meteorSpawnTimer >= meteorSpawnRate) {
+        sf::RectangleShape meteor(sf::Vector2f(50.f, 50.f));
+        meteor.setTexture(&meteorTexture);
+        meteor.setPosition(rand() % screenWidth, -50.f);
+        meteors.push_back(meteor);
+        meteorSpawnTimer = 0.0f;
+    }
+    for (auto& meteor : meteors) {
+        meteor.move(0, 100 * deltaTime);
+    }
+    meteors.erase(std::remove_if(meteors.begin(), meteors.end(), [this](const sf::RectangleShape& meteor) {
+        return meteor.getPosition().y > screenHeight;
+        }), meteors.end());
+}
+
+void GameEngine::checkCollisions() {
+    for (auto& meteor : meteors) {
+        if (spaceShip.getGlobalBounds().intersects(meteor.getGlobalBounds())) {
+            spaceGameActive = false;
+            expeditionScreenActive = true;
+            break;
+        }
+    }
 }
 
 
@@ -305,5 +496,52 @@ void GameEngine::animateLogo(float deltaTime) {
         playButtonEndPosition = sf::Vector2f(screenWidth / 2 - playButton.getSize().x / 2, logoEndPosition.y + logo.getSize().y + 20.f);
         playButtonAnimationTime = 0.0f;
         playButtonOpacity = 0;
+    }
+}
+
+void GameEngine::resetGameState() {
+    // Reset game timers and otehr stuff
+    gameSessionTimer = 0.0f;
+    startingPhaseTimer = 0.0f;
+    gameEnded = false;
+    spaceshipLanded = false;
+    landingAnimationStarted = false;
+    showCongratulationsScreen = false;
+    startingPhase = true;
+
+    // Reset spaceship and meteors
+    spaceShip.setPosition(screenWidth / 2 - spaceShip.getSize().x / 2, screenHeight / 4);
+    meteors.clear();
+
+
+    // Reset UI elements if necessary
+    mainMenuActive = false;
+    expeditionScreenActive = true;
+}
+void GameEngine::handleContinueButtonClick() {
+    showCongratulationsScreen = false;
+    expeditionScreenActive = true;
+    resetGameState();
+
+}
+
+void GameEngine::handleHomeButtonClick() {
+    showCongratulationsScreen = false;
+    expeditionScreenActive = true;
+    spaceGameActive = false;
+ 
+}
+
+void GameEngine::initializeCrewMembers() {
+
+    crewMembers["Space Ship"] = { "Model A", "Model B" };
+
+
+    float optionY = popupBackground.getPosition().y + 20;
+    for (const auto& role : roles) {
+        sf::Text option(role, font, 24);
+        option.setPosition(popupBackground.getPosition().x + 20, optionY);
+        crewOptions.push_back(option);
+        optionY += 30;
     }
 }
