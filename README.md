@@ -11,7 +11,7 @@
   
 ## 🔍 Description <a name="description"></a>
 <h1 align="center"> Space Adventure </h1>
-<p align="center"> Our site goal is to make more people do fun and relaxing "green" challenges which help the enviorment by rewarding the people! When the person have done a certain challenge and send us proof they will win small prize!</p>
+<p align="center"> The "Space Adventure" program includes various functionalities, covering the creation of new expeditions with the selection of a spacecraft and a target planet, viewing existing expeditions with their status, editing and deleting expeditions, adding and removing crew members, searching for expeditions by destination, and more. The program's interface provides a clear menu of options and a convenient way to interact with the system.It features a contextual menu.</p>
 
 ## 🖥️ Technologies used <a name="technologies"></a> 
   
