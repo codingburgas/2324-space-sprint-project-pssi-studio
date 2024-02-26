@@ -271,7 +271,6 @@ void GameEngine::render() {
             window.draw(spaceShipAButton);
             window.draw(spaceShipBButton);
             window.draw(spaceShipCButton);
-            window.draw(backButton);
         }
 
         if (logoVisible) {
@@ -329,7 +328,7 @@ void GameEngine::loadContent() {
         std::cerr << "Could not load play button texture" << std::endl;
     }
     playButton.setTexture(&playButtonTexture);
-    if (!expeditionBackgroundTexture.loadFromFile("Textures/ExpeditionBackground.jpg")) {
+    if (!expeditionBackgroundTexture.loadFromFile("Textures/ExpeditionBackground.png")) {
         std::cerr << "Could not load expedition background texture" << std::endl;
     }
     else {
@@ -420,9 +419,9 @@ void GameEngine::initializeUI() {
 
     sf::FloatRect backgroundBounds = crewSelectionBackground.getGlobalBounds();
 
-    float buttonWidth = 150.f;
+    float buttonWidth = 200.f;
     float buttonHeight = 250.f;
-    float spacing = 20.f;
+    float spacing = 50.f;
 
     float totalWidth = 3 * buttonWidth + 2 * spacing;
 
