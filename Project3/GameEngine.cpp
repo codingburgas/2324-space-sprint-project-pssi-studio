@@ -82,9 +82,8 @@ void GameEngine::processEvents() {
                     std::cout << "SpaceShipA Button Clicked" << std::endl;
                     currentSpaceShipTexture = &spaceShipBTexture;
 
-                    // Adjust the size of the spaceShip to match the texture's dimensions
                     sf::Vector2u textureSize = currentSpaceShipTexture->getSize();
-                    spaceShip.setSize(sf::Vector2f(textureSize.x, textureSize.y)); // Adjust this line as needed
+                    spaceShip.setSize(sf::Vector2f(textureSize.x, textureSize.y));
 
                     if (spaceGameActive) {
                         spaceShip.setTexture(currentSpaceShipTexture);
@@ -97,10 +96,8 @@ void GameEngine::processEvents() {
                 if (spaceShipCButton.getGlobalBounds().contains(worldPos)) {
                     std::cout << "SpaceShipA Button Clicked" << std::endl;
                     currentSpaceShipTexture = &spaceShipCTexture;
-
-                    // Adjust the size of the spaceShip to match the texture's dimensions
                     sf::Vector2u textureSize = currentSpaceShipTexture->getSize();
-                    spaceShip.setSize(sf::Vector2f(textureSize.x, textureSize.y)); // Adjust this line as needed
+                    spaceShip.setSize(sf::Vector2f(textureSize.x, textureSize.y));
 
                     if (spaceGameActive) {
                         spaceShip.setTexture(currentSpaceShipTexture);
