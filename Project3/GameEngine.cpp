@@ -43,7 +43,7 @@ void GameEngine::processEvents() {
                     logoVisible = false;
                     initializeExpeditionUI();
                 }
-                if(newExpeditionButton.getGlobalBounds().contains(worldPos)) {
+                if (newExpeditionButton.getGlobalBounds().contains(worldPos)) {
                     std::cout << "New Expedition Button Clicked" << std::endl;
                     spaceGameActive = true;
                     expeditionScreenActive = false;
@@ -64,36 +64,47 @@ void GameEngine::processEvents() {
 
                 }
                 if (spaceShipAButton.getGlobalBounds().contains(worldPos)) {
-                    std::cout << "SpaceShipB Button Clicked" << std::endl;
+                    std::cout << "SpaceShipA Button Clicked" << std::endl;
+                    currentSpaceShipTexture = &spaceShipATexture;
 
-                    if (!spaceShipATexture.loadFromFile("Textures/SpaceShipA.png")) {
-                        std::cerr << "Could not load SpaceShipB texture" << std::endl;
+                    sf::Vector2u textureSize = currentSpaceShipTexture->getSize();
+                    spaceShip.setSize(sf::Vector2f(textureSize.x, textureSize.y));
+
+                    if (spaceGameActive) {
+                        spaceShip.setTexture(currentSpaceShipTexture);
                     }
-
-                    spaceShip.setTexture(&spaceShipATexture);
 
                     crewSelectionScreenActive = false;
                     expeditionScreenActive = true;
                 }
 
                 if (spaceShipBButton.getGlobalBounds().contains(worldPos)) {
-                    std::cout << "SpaceShipB Button Clicked" << std::endl;
+                    std::cout << "SpaceShipA Button Clicked" << std::endl;
+                    currentSpaceShipTexture = &spaceShipBTexture;
 
-                    spaceShip.setTexture(&spaceShipBTexture);
+                    // Adjust the size of the spaceShip to match the texture's dimensions
+                    sf::Vector2u textureSize = currentSpaceShipTexture->getSize();
+                    spaceShip.setSize(sf::Vector2f(textureSize.x, textureSize.y)); // Adjust this line as needed
+
+                    if (spaceGameActive) {
+                        spaceShip.setTexture(currentSpaceShipTexture);
+                    }
 
                     crewSelectionScreenActive = false;
                     expeditionScreenActive = true;
                 }
 
-
                 if (spaceShipCButton.getGlobalBounds().contains(worldPos)) {
-                    std::cout << "SpaceShipB Button Clicked" << std::endl;
+                    std::cout << "SpaceShipA Button Clicked" << std::endl;
+                    currentSpaceShipTexture = &spaceShipCTexture;
 
-                    if (!spaceShipCTexture.loadFromFile("Textures/SpaceShipC.png")) {
-                        std::cerr << "Could not load SpaceShipB texture" << std::endl;
+                    // Adjust the size of the spaceShip to match the texture's dimensions
+                    sf::Vector2u textureSize = currentSpaceShipTexture->getSize();
+                    spaceShip.setSize(sf::Vector2f(textureSize.x, textureSize.y)); // Adjust this line as needed
+
+                    if (spaceGameActive) {
+                        spaceShip.setTexture(currentSpaceShipTexture);
                     }
-
-                    spaceShip.setTexture(&spaceShipCTexture);
 
                     crewSelectionScreenActive = false;
                     expeditionScreenActive = true;
@@ -219,9 +230,10 @@ void GameEngine::update() {
 }
 
 void GameEngine::render() {
-    //Over all renders every element of the game!
+    // Clears the window with black color by default
     window.clear();
 
+    // Always draw the background
     window.draw(background1);
     window.draw(background2);
     window.draw(exitButton);
@@ -230,28 +242,6 @@ void GameEngine::render() {
         window.draw(playButton);
     }
 
-    if (showCongratulationsScreen) {
-        window.draw(congratulationsSprite);
-
-        window.draw(continueButton);
-        window.draw(homeButton);
-    }
-    if (crewSelectionScreenActive) {
-        window.draw(crewSelectionBackground);
-        window.draw(spaceShipAButton);
-        window.draw(spaceShipBButton);
-        window.draw(spaceShipCButton);
-        window.draw(backButton);
-    } else {
-        if (expeditionScreenActive && !spaceGameActive) {
-            window.draw(expeditionBackground);
-            window.draw(expeditionTitleShape);
-            window.draw(newExpeditionButton);
-            window.draw(CrewButton);
-        }
-    }
-
-
 
     if (spaceGameActive) {
         if (startingPhase) {
@@ -259,10 +249,12 @@ void GameEngine::render() {
         }
         else {
             if (!gameEnded) {
+
                 for (auto& meteor : meteors) {
                     window.draw(meteor);
                 }
             }
+
             window.draw(spaceShip);
         }
 
@@ -270,24 +262,35 @@ void GameEngine::render() {
             window.draw(bigPlanet);
         }
     }
-    else
-    {
+    else {
+
         if (expeditionScreenActive) {
             window.draw(expeditionBackground);
             window.draw(expeditionTitleShape);
             window.draw(newExpeditionButton);
             window.draw(CrewButton);
         }
-        else {
-            if (logoVisible) {
-                window.draw(logo);
-            }
-
-
-            if (StudioTextPopped) {
-                window.draw(StudioText);
-            }
+        else if (crewSelectionScreenActive) {
+            window.draw(crewSelectionBackground);
+            window.draw(spaceShipAButton);
+            window.draw(spaceShipBButton);
+            window.draw(spaceShipCButton);
+            window.draw(backButton);
         }
+
+        if (logoVisible) {
+            window.draw(logo);
+        }
+
+        if (StudioTextPopped) {
+            window.draw(StudioText);
+        }
+    }
+
+    if (showCongratulationsScreen) {
+        window.draw(congratulationsSprite);
+        window.draw(continueButton);
+        window.draw(homeButton);
     }
 
     window.display();
@@ -343,9 +346,6 @@ void GameEngine::loadContent() {
         !CrewButtonTexture.loadFromFile("Textures/CrewButton.png")) {
         std::cerr << "Could not load one or more button textures" << std::endl;
     }
-    if (!spaceShipTexture.loadFromFile("Textures/SpaceShip.png")) {
-        std::cerr << "Could not load space ship texture" << std::endl;
-    }
     if (!meteorTexture.loadFromFile("Textures/Meteor.png")) {
         std::cerr << "Could not load meteor texture" << std::endl;
     }
@@ -376,7 +376,9 @@ void GameEngine::loadContent() {
     if (!crewSelectionBackgroundTexture.loadFromFile("Textures/CrewSelectionBackground.jpg")) {
         std::cerr << "Could not load Crew Selection background texture" << std::endl;
     }
-
+    if (!spaceShipTexture.loadFromFile("Textures/SpaceShipA.png")) {
+        std::cerr << "Could not load SpaceShipA texture" << std::endl;
+    }
 
 }
 
@@ -482,7 +484,7 @@ void GameEngine::initializeExpeditionUI() {
 
 void GameEngine::initializeSpaceGame() {
     spaceShip.setTexture(&spaceShipTexture);
-    spaceShip.setSize(sf::Vector2f(100.f, 100.f));
+    spaceShip.setSize(sf::Vector2f(100.f, 150.f));
     spaceShip.setPosition(screenWidth / 2 - spaceShip.getSize().x / 2, screenHeight - spaceShip.getSize().y - 450);
     meteors.clear();
     meteorSpawnTimer = 0.0f;
@@ -510,6 +512,7 @@ void GameEngine::initializeSpaceGame() {
     homeButton.setTexture(&homeButtonTexture);
     homeButton.setSize(sf::Vector2f(400, 200));
     homeButton.setPosition(screenWidth / 2 - homeButton.getSize().x / 3, continueButton.getPosition().y + continueButton.getSize().y + 10);
+    spaceShip.setTexture(currentSpaceShipTexture);
 }
 
 void GameEngine::updateMeteors(float deltaTime) {

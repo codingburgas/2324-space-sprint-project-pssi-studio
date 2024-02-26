@@ -78,6 +78,7 @@ private:
     sf::RectangleShape popupBackground;
     std::vector<sf::Text> crewOptions;
     sf::Font font;
+    sf::Texture* currentSpaceShipTexture;
 
     std::vector<std::string> roles = { "Space Ship", "Captain", "Repairman", "Navigator", "Engineer" };
     std::map<std::string, std::vector<std::string>> crewMembers;
