@@ -84,6 +84,11 @@ private:
     std::map<std::string, std::vector<std::string>> crewMembers;
     bool showCongratulationsScreen = false;
 
+    sf::Texture meteorTexture1;
+    sf::Texture meteorTexture2;
+    sf::Texture meteorTexture3;
+
+
 
     // These are somewhat like an event value mainly used for loading and unloading elements that should be loaded again!
     unsigned int screenWidth;

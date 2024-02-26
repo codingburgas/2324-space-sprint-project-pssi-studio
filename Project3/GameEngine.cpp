@@ -375,6 +375,16 @@ void GameEngine::loadContent() {
     if (!spaceShipTexture.loadFromFile("Textures/SpaceShipA.png")) {
         std::cerr << "Could not load SpaceShipA texture" << std::endl;
     }
+    if (!meteorTexture1.loadFromFile("Textures/Meteor.png")) {
+        std::cerr << "Could not load Meteor1 texture" << std::endl;
+    }
+    if (!meteorTexture2.loadFromFile("Textures/Meteor2.png")) {
+        std::cerr << "Could not load Meteor2 texture" << std::endl;
+    }
+    if (!meteorTexture3.loadFromFile("Textures/Meteor3.png")) {
+        std::cerr << "Could not load Meteor3 texture" << std::endl;
+    }
+
 
 }
 
@@ -525,7 +535,21 @@ void GameEngine::updateMeteors(float deltaTime) {
     meteorSpawnTimer += deltaTime;
     if (meteorSpawnTimer >= meteorSpawnRate) {
         sf::RectangleShape meteor(sf::Vector2f(50.f, 50.f));
-        meteor.setTexture(&meteorTexture);
+
+        // Randomly choose one of the three textures
+        int textureChoice = rand() % 3;
+        switch (textureChoice) {
+        case 0:
+            meteor.setTexture(&meteorTexture1);
+            break;
+        case 1:
+            meteor.setTexture(&meteorTexture2);
+            break;
+        case 2:
+            meteor.setTexture(&meteorTexture3);
+            break;
+        }
+
         meteor.setPosition(rand() % screenWidth, -50.f);
         meteors.push_back(meteor);
         meteorSpawnTimer = 0.0f;
@@ -537,6 +561,7 @@ void GameEngine::updateMeteors(float deltaTime) {
         return meteor.getPosition().y > screenHeight;
         }), meteors.end());
 }
+
 
 void GameEngine::checkCollisions() {
     for (auto& meteor : meteors) {
