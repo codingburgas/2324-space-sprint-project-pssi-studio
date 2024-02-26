@@ -142,7 +142,7 @@ void GameEngine::update() {
             updateMeteors(deltaTime);
         }
         // I set that timer to 10 seconds for testing purposes ! It should be set back to 60 after the test!(Still be aware that here is the time for testing purposes!!!)
-        if (gameSessionTimer >= 60.0f) {
+        if (gameSessionTimer >= 10.0f) {
             gameEnded = true;
         }
 
@@ -254,19 +254,16 @@ void GameEngine::render() {
             window.draw(spaceShip);
         }
 
-        if (gameEnded && spaceshipLanded) {
-            window.draw(bigPlanet);
-        }
     }
     else {
 
-        if (expeditionScreenActive) {
+        if (expeditionScreenActive && !spaceGameActive) {
             window.draw(expeditionBackground);
             window.draw(expeditionTitleShape);
             window.draw(newExpeditionButton);
             window.draw(CrewButton);
         }
-        else if (crewSelectionScreenActive) {
+        else if (crewSelectionScreenActive && !spaceGameActive) {
             window.draw(crewSelectionBackground);
             window.draw(spaceShipAButton);
             window.draw(spaceShipBButton);
@@ -290,8 +287,6 @@ void GameEngine::render() {
 
     window.display();
 }
-
-
 
 void GameEngine::loadContent() {
     // This is the main loading function here! (Only add elements and don't remove them!)
@@ -499,8 +494,8 @@ void GameEngine::initializeSpaceGame() {
 
     // Load and set up the big planet texture (in that case this is unused for the moment!)
     bigPlanet.setTexture(&bigPlanetTexture);
-    bigPlanet.setSize(sf::Vector2f(300.f, 300.f));
-    bigPlanet.setPosition(screenWidth / 2 - bigPlanet.getSize().x / 2, screenHeight / 2 - bigPlanet.getSize().y / 2);
+    bigPlanet.setSize(sf::Vector2f(5000.f, 2000.f));
+    bigPlanet.setPosition(screenWidth / 2 - earth.getSize().x / 2, screenHeight - earth.getSize().y + 1000);
 
     if (!earthTexture.loadFromFile("Textures/Earth.png")) {
         std::cerr << "Could not load Earth texture" << std::endl;
