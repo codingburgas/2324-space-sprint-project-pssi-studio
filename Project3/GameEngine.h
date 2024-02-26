@@ -80,8 +80,6 @@ private:
     sf::Font font;
     sf::Texture* currentSpaceShipTexture;
 
-    std::vector<std::string> roles = { "Space Ship", "Captain", "Repairman", "Navigator", "Engineer" };
-    std::map<std::string, std::vector<std::string>> crewMembers;
     bool showCongratulationsScreen = false;
 
     sf::Texture meteorTexture1;
@@ -122,7 +120,6 @@ private:
 
     bool startingPhase = true;
     float startingPhaseTimer = 0.0f;
-
 
     // Calls the main functions
     void processEvents();

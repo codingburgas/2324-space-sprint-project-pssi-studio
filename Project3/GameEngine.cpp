@@ -1,5 +1,6 @@
 // GameEngine used to run most of the stuff happening! Also the graphics!
-
+#include <chrono>
+#include <thread>
 #include "GameEngine.h"
 #include <iostream>
 
@@ -364,7 +365,7 @@ void GameEngine::loadContent() {
     if (!spaceShipCTexture.loadFromFile("Textures/SpaceShipC.png")) {
         std::cerr << "Could not load SpaceShipC texture" << std::endl;
     }
-    if (!crewSelectionBackgroundTexture.loadFromFile("Textures/CrewSelectionBackground.jpg")) {
+    if (!crewSelectionBackgroundTexture.loadFromFile("Textures/CrewSelectionBackground.png")) {
         std::cerr << "Could not load Crew Selection background texture" << std::endl;
     }
     if (!spaceShipTexture.loadFromFile("Textures/SpaceShipB.png")) {
@@ -585,7 +586,6 @@ void GameEngine::checkCollisions() {
 
 
 void GameEngine::animateLogo(float deltaTime) {
-    // Play the introduction sound here! (Don't touch here :D)
     static bool soundPlayed = false;
     if (!soundPlayed) {
         sound.play();
@@ -596,46 +596,47 @@ void GameEngine::animateLogo(float deltaTime) {
     static float movementDuration = 0;
     movementDuration += deltaTime;
 
-    // Define and tweak the values for the introduction screen!(I presonally don't recommend you guys to touch this part!)
+
     float logoToCenterDuration = 1.3f;
     float postLogoDuration = 2.0f;
-    float cycleDuration = logoToCenterDuration + postLogoDuration + 2.0f;
+    float cycleDuration = logoToCenterDuration + postLogoDuration; 
+    float middleYPosition = screenHeight / 2 - logo.getSize().y / 2;
+    float bottomYPosition = screenHeight - logo.getSize().y;
 
-    // The main logo should show here!
     if (movementDuration <= logoToCenterDuration) {
         float progress = movementDuration / logoToCenterDuration;
-        float middleYPosition = screenHeight / 2 - logo.getSize().y / 2;
-        float bottomYPosition = screenHeight - logo.getSize().y;
-        logo.setPosition(screenWidth / 2 - logo.getSize().x / 2, bottomYPosition + progress * (middleYPosition - bottomYPosition));
+        logo.setPosition(screenWidth / 2 - logo.getSize().x / 2, bottomYPosition - progress * (bottomYPosition - middleYPosition));
+    }
+    else {
+        logo.setPosition(screenWidth / 2 - logo.getSize().x / 2, middleYPosition);
     }
 
-    // The Studio Text should show here!
-    if (movementDuration > logoToCenterDuration && movementDuration <= postLogoDuration) {
+    if (movementDuration > logoToCenterDuration && movementDuration <= cycleDuration) {
         if (!StudioTextPopped) {
             StudioText.setSize(sf::Vector2f(300.f, 100.f));
-
             float margin = 20.f;
-            float studioTextY = logo.getPosition().y + logo.getSize().y + margin;
+            float studioTextY = middleYPosition + logo.getSize().y + margin;
             StudioText.setPosition((screenWidth - StudioText.getSize().x) / 2, studioTextY);
-
             StudioTextPopped = true;
         }
     }
-
-    // This is for the PlayButton!
-    if (movementDuration > cycleDuration && !mainMenuActive) {
-        mainMenuActive = true;
-        logoAnimationActive = true;
+    else if (movementDuration > cycleDuration) {
         StudioTextPopped = false;
-        logoStartPosition = logo.getPosition();
-        logoAnimationTime = 0.0f;
+    }
 
+    if (movementDuration > cycleDuration && !mainMenuActive) {
+
+        mainMenuActive = true;
         playButtonAnimationActive = true;
-        playButtonEndPosition = sf::Vector2f(screenWidth / 2 - playButton.getSize().x / 2, logoEndPosition.y + logo.getSize().y + 20.f);
-        playButtonAnimationTime = 0.0f;
-        playButtonOpacity = 0;
+        playButtonEndPosition = sf::Vector2f(screenWidth / 2 - playButton.getSize().x / 2, middleYPosition + logo.getSize().y + 50.f);
+        playButton.setPosition(playButtonEndPosition);
+        playButtonOpacity = 255;
+        playButton.setFillColor(sf::Color(255, 255, 255, static_cast<sf::Uint8>(playButtonOpacity)));
     }
 }
+
+
+
 
 void GameEngine::resetGameState() {
     // Reset game timers and otehr stuff
@@ -668,15 +669,4 @@ void GameEngine::handleHomeButtonClick() {
     expeditionScreenActive = true;
     spaceGameActive = false;
 
-}
-
-void GameEngine::initializeCrewMembers() {
-
-    float optionY = popupBackground.getPosition().y + 20;
-    for (const auto& role : roles) {
-        sf::Text option(role, font, 24);
-        option.setPosition(popupBackground.getPosition().x + 20, optionY);
-        crewOptions.push_back(option);
-        optionY += 30;
-    }
 }
