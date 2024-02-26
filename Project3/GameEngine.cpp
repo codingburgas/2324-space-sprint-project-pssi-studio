@@ -79,7 +79,7 @@ void GameEngine::processEvents() {
                 }
 
                 if (spaceShipBButton.getGlobalBounds().contains(worldPos)) {
-                    std::cout << "SpaceShipA Button Clicked" << std::endl;
+                    std::cout << "SpaceShipB Button Clicked" << std::endl;
                     currentSpaceShipTexture = &spaceShipBTexture;
 
                     sf::Vector2u textureSize = currentSpaceShipTexture->getSize();
@@ -142,7 +142,7 @@ void GameEngine::update() {
             updateMeteors(deltaTime);
         }
         // I set that timer to 10 seconds for testing purposes ! It should be set back to 60 after the test!(Still be aware that here is the time for testing purposes!!!)
-        if (gameSessionTimer >= 10.0f) {
+        if (gameSessionTimer >= 60.0f) {
             gameEnded = true;
         }
 
@@ -372,7 +372,7 @@ void GameEngine::loadContent() {
     if (!crewSelectionBackgroundTexture.loadFromFile("Textures/CrewSelectionBackground.jpg")) {
         std::cerr << "Could not load Crew Selection background texture" << std::endl;
     }
-    if (!spaceShipTexture.loadFromFile("Textures/SpaceShipA.png")) {
+    if (!spaceShipTexture.loadFromFile("Textures/SpaceShipB.png")) {
         std::cerr << "Could not load SpaceShipA texture" << std::endl;
     }
     if (!meteorTexture1.loadFromFile("Textures/Meteor.png")) {
@@ -490,7 +490,7 @@ void GameEngine::initializeExpeditionUI() {
 
 void GameEngine::initializeSpaceGame() {
     spaceShip.setTexture(&spaceShipTexture);
-    spaceShip.setSize(sf::Vector2f(100.f, 150.f));
+    spaceShip.setSize(sf::Vector2f(200.f, 250.f));
     spaceShip.setPosition(screenWidth / 2 - spaceShip.getSize().x / 2, screenHeight - spaceShip.getSize().y - 450);
     meteors.clear();
     meteorSpawnTimer = 0.0f;
@@ -564,14 +564,29 @@ void GameEngine::updateMeteors(float deltaTime) {
 
 
 void GameEngine::checkCollisions() {
+    // Used for detecting the colissions with the meteors! Also the Shrink factor makes it easier for the player!
+    float shrinkFactor = 0.5f;
     for (auto& meteor : meteors) {
-        if (spaceShip.getGlobalBounds().intersects(meteor.getGlobalBounds())) {
+        sf::FloatRect reducedSpaceShipBounds = spaceShip.getGlobalBounds();
+        reducedSpaceShipBounds.left += reducedSpaceShipBounds.width * (1 - shrinkFactor) / 2;
+        reducedSpaceShipBounds.top += reducedSpaceShipBounds.height * (1 - shrinkFactor) / 2;
+        reducedSpaceShipBounds.width *= shrinkFactor;
+        reducedSpaceShipBounds.height *= shrinkFactor;
+
+        sf::FloatRect reducedMeteorBounds = meteor.getGlobalBounds();
+        reducedMeteorBounds.left += reducedMeteorBounds.width * (1 - shrinkFactor) / 2;
+        reducedMeteorBounds.top += reducedMeteorBounds.height * (1 - shrinkFactor) / 2;
+        reducedMeteorBounds.width *= shrinkFactor;
+        reducedMeteorBounds.height *= shrinkFactor;
+
+        if (reducedSpaceShipBounds.intersects(reducedMeteorBounds)) {
             spaceGameActive = false;
             expeditionScreenActive = true;
             break;
         }
     }
 }
+
 
 
 void GameEngine::animateLogo(float deltaTime) {

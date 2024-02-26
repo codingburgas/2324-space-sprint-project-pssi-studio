@@ -103,5 +103,5 @@ C:\Users\752\Documents\GitHub\2324-space-sprint-project-pssi-studio\Project3\Gam
 C:\Users\752\Documents\GitHub\2324-space-sprint-project-pssi-studio\Project3\GameEngine.cpp(527,69): warning C4244: 'argument': conversion from 'unsigned int' to 'float', possible loss of data
 C:\Users\752\Documents\GitHub\2324-space-sprint-project-pssi-studio\Project3\GameEngine.cpp(527,51): warning C4244: 'argument': conversion from 'unsigned int' to 'float', possible loss of data
 C:\Users\752\Documents\GitHub\2324-space-sprint-project-pssi-studio\Project3\GameEngine.cpp(553,35): warning C4244: 'argument': conversion from 'unsigned int' to 'float', possible loss of data
-C:\Users\752\Documents\GitHub\2324-space-sprint-project-pssi-studio\Project3\GameEngine.cpp(641,85): warning C4244: 'argument': conversion from 'unsigned int' to 'float', possible loss of data
+C:\Users\752\Documents\GitHub\2324-space-sprint-project-pssi-studio\Project3\GameEngine.cpp(659,85): warning C4244: 'argument': conversion from 'unsigned int' to 'float', possible loss of data
   Project3.vcxproj -> C:\Users\752\Documents\GitHub\2324-space-sprint-project-pssi-studio\x64\Debug\PSSI_SpaceAdventure.exe
