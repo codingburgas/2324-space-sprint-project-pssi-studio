@@ -505,11 +505,11 @@ void GameEngine::initializeSpaceGame() {
 
     float additionalSpacing = 200.0f;
 
-    continueButton.setSize(sf::Vector2f(300, 100));
+    continueButton.setSize(sf::Vector2f(300, 200));
     continueButton.setOrigin(continueButton.getSize().x / 2, continueButton.getSize().y / 2);
     continueButton.setPosition(screenWidth / 2, congratulationsSprite.getPosition().y + congratulationsSprite.getLocalBounds().height / 2 + additionalSpacing + continueButton.getSize().y / 2);
 
-    homeButton.setSize(sf::Vector2f(300, 100));
+    homeButton.setSize(sf::Vector2f(300, 200));
     homeButton.setOrigin(homeButton.getSize().x / 2, homeButton.getSize().y / 2);
     homeButton.setPosition(screenWidth / 2, continueButton.getPosition().y + continueButton.getSize().y / 2 + buttonSpacing + homeButton.getSize().y / 2);
 
