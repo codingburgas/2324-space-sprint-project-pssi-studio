@@ -142,7 +142,7 @@ void GameEngine::update() {
             updateMeteors(deltaTime);
         }
         // I set that timer to 10 seconds for testing purposes ! It should be set back to 60 after the test!(Still be aware that here is the time for testing purposes!!!)
-        if (gameSessionTimer >= 60.0f) {
+        if (gameSessionTimer >= 10.0f) {
             gameEnded = true;
         }
 
@@ -230,7 +230,6 @@ void GameEngine::render() {
     // Clears the window with black color by default
     window.clear();
 
-    // Always draw the background
     window.draw(background1);
     window.draw(background2);
     window.draw(exitButton);
@@ -502,13 +501,23 @@ void GameEngine::initializeSpaceGame() {
     startingPhase = true;
     startingPhaseTimer = 0.0f;
 
-    continueButton.setTexture(&continueButtonTexture);
-    continueButton.setSize(sf::Vector2f(400, 200));
-    continueButton.setPosition(screenWidth / 2 - continueButton.getSize().x / 2, screenHeight * 0.75);
+    float buttonSpacing = 50.0f;
 
-    homeButton.setTexture(&homeButtonTexture);
-    homeButton.setSize(sf::Vector2f(400, 200));
-    homeButton.setPosition(screenWidth / 2 - homeButton.getSize().x / 3, continueButton.getPosition().y + continueButton.getSize().y + 10);
+    float additionalSpacing = 200.0f;
+
+    continueButton.setSize(sf::Vector2f(300, 100));
+    continueButton.setOrigin(continueButton.getSize().x / 2, continueButton.getSize().y / 2);
+    continueButton.setPosition(screenWidth / 2, congratulationsSprite.getPosition().y + congratulationsSprite.getLocalBounds().height / 2 + additionalSpacing + continueButton.getSize().y / 2);
+
+    homeButton.setSize(sf::Vector2f(300, 100));
+    homeButton.setOrigin(homeButton.getSize().x / 2, homeButton.getSize().y / 2);
+    homeButton.setPosition(screenWidth / 2, continueButton.getPosition().y + continueButton.getSize().y / 2 + buttonSpacing + homeButton.getSize().y / 2);
+
+    congratulationsSprite.setOrigin(congratulationsSprite.getLocalBounds().width / 2, congratulationsSprite.getLocalBounds().height / 2);
+    congratulationsSprite.setPosition(screenWidth / 2, screenHeight / 4);
+
+
+
     spaceShip.setTexture(currentSpaceShipTexture);
 }
 
