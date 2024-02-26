@@ -15,7 +15,7 @@
 
 ## 🖥️ Technologies used <a name="technologies"></a> 
   
-<a href="#"><img src="![image](https://github.com/codingburgas/2324-space-sprint-project-pssi-studio/assets/132440275/72497920-2ba9-4c37-8d1d-ac6bd905b8af)" width=100></a>
+<a href="#"><img src="https://upload.wikimedia.org/wikipedia/commons/thumb/1/18/ISO_C%2B%2B_Logo.svg/1200px-ISO_C%2B%2B_Logo.svg.png" width=100></a>
 <a href="#"><img src="https://cdn.sanity.io/images/599r6htc/localized/46a76c802176eb17b04e12108de7e7e0f3736dc6-1024x1024.png?w=804&h=804&q=75&fit=max&auto=format" width=100 height=101></a>
 <a href="#"><img src="https://cdn-icons-png.flaticon.com/512/25/25231.png" width=100></a>
 <a href="#"><img src="https://cdn-icons-png.flaticon.com/512/732/732212.png" width=100></a>
