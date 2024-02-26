@@ -24,7 +24,7 @@
 <a href="#"><img src="https://upload.wikimedia.org/wikipedia/commons/thumb/9/9a/Visual_Studio_Code_1.35_icon.svg/512px-Visual_Studio_Code_1.35_icon.svg.png" width=100></a>
 <a href="#"><img src="https://upload.wikimedia.org/wikipedia/commons/thumb/f/fd/Microsoft_Office_Word_%282019%E2%80%93present%29.svg/2203px-Microsoft_Office_Word_%282019%E2%80%93present%29.svg.png" width=100></a>
 ## 🧑 Collaborators <a name="collaborators"></a>
-- [Stiliyan Dyulgerov](https://github.com/STDyulgerov22) - Scrum trainer 
+- [Stiliyan Dyulgerov](https://github.com/STDyulgerov22) - Front-end Developer
 - [Ivailo Lalev](https://github.com/ILLalev22) - Front-end Developer
 - [Simeon Kalamerov](https://github.com/SNKalamerov22) - Front-end Developer
-- [Pavlin Peev](https://github.com/PPPeev223) - Designer
+- [Pavlin Peev](https://github.com/PPPeev223) - Scrum trainer 
