@@ -360,6 +360,7 @@ void GameEngine::loadContent() {
     if (!homeButtonTexture.loadFromFile("Textures/HomeButton.png")) {
         std::cerr << "Could not load Home Button texture" << std::endl;
     }
+    homeButton.setTexture(&homeButtonTexture);
     if (!spaceShipATexture.loadFromFile("Textures/SpaceShipA.png")) {
         std::cerr << "Could not load SpaceShipA texture" << std::endl;
     }
