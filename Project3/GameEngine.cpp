@@ -630,9 +630,6 @@ void GameEngine::handleHomeButtonClick() {
 
 void GameEngine::initializeCrewMembers() {
 
-    crewMembers["Space Ship"] = { "Model A", "Model B" };
-
-
     float optionY = popupBackground.getPosition().y + 20;
     for (const auto& role : roles) {
         sf::Text option(role, font, 24);
