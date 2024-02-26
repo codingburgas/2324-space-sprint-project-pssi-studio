@@ -42,6 +42,7 @@ void GameEngine::processEvents() {
                     expeditionScreenActive = true;
                     mainMenuActive = false;
                     logoVisible = false;
+                    crewSelectionScreenActive = false;
                     initializeExpeditionUI();
                 }
                 if (newExpeditionButton.getGlobalBounds().contains(worldPos)) {
@@ -143,7 +144,7 @@ void GameEngine::update() {
             updateMeteors(deltaTime);
         }
         // I set that timer to 10 seconds for testing purposes ! It should be set back to 60 after the test!(Still be aware that here is the time for testing purposes!!!)
-        if (gameSessionTimer >= 10.0f) {
+        if (gameSessionTimer >= 60.0f) {
             gameEnded = true;
         }
 
