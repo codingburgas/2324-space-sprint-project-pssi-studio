@@ -1,5 +1,3 @@
-// GameEngine used to run most of the stuff happening! Also the graphics!
-
 #include "GameEngine.h"
 #include <iostream>
 
@@ -350,6 +348,7 @@ void GameEngine::loadContent() {
     if (!continueButtonTexture.loadFromFile("Textures/ContinueButton.png")) {
         std::cerr << "Could not load Continue Button texture" << std::endl;
     }
+
     continueButton.setTexture(&continueButtonTexture);
     if (!homeButtonTexture.loadFromFile("Textures/HomeButton.png")) {
         std::cerr << "Could not load Home Button texture" << std::endl;
