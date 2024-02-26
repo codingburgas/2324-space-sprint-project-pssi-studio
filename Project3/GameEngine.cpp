@@ -555,6 +555,7 @@ void GameEngine::animateLogo(float deltaTime) {
     if (!soundPlayed) {
         sound.play();
         soundPlayed = true;
+        sound.setVolume(10.0f);
     }
 
     static float movementDuration = 0;
