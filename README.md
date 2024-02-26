@@ -10,7 +10,7 @@
   - [Collaborators](#collaborators)
   
 ## 🔍 Description <a name="description"></a>
-<h1 align="center"> Green Challenges </h1>
+<h1 align="center"> Space Adventure </h1>
 <p align="center"> Our site goal is to make more people do fun and relaxing "green" challenges which help the enviorment by rewarding the people! When the person have done a certain challenge and send us proof they will win small prize!</p>
 
 ## 🖥️ Technologies used <a name="technologies"></a> 
