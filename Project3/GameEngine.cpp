@@ -497,8 +497,8 @@ void GameEngine::initializeSpaceGame() {
         std::cerr << "Could not load Earth texture" << std::endl;
     }
     earth.setTexture(&earthTexture);
-    earth.setSize(sf::Vector2f(6000.f, 3000.f));
-    earth.setPosition(screenWidth / 2 - earth.getSize().x / 2, screenHeight - earth.getSize().y + 2750);
+    earth.setSize(sf::Vector2f(5000.f, 2000.f));
+    earth.setPosition(screenWidth / 2 - earth.getSize().x / 2, screenHeight - earth.getSize().y + 1000);
     startingPhase = true;
     startingPhaseTimer = 0.0f;
 
