@@ -599,7 +599,7 @@ void GameEngine::animateLogo(float deltaTime) {
 
     float logoToCenterDuration = 1.3f;
     float postLogoDuration = 2.0f;
-    float cycleDuration = logoToCenterDuration + postLogoDuration; 
+    float cycleDuration = logoToCenterDuration + postLogoDuration;
     float middleYPosition = screenHeight / 2 - logo.getSize().y / 2;
     float bottomYPosition = screenHeight - logo.getSize().y;
 
