@@ -1,50 +1,8 @@
-﻿C:\Program Files\Microsoft Visual Studio\2022\Professional\MSBuild\Microsoft\VC\v170\Microsoft.CppBuild.targets(531,5): warning MSB8028: The intermediate directory (x64\Debug\) contains files shared from another project (Project3.vcxproj).  This can lead to incorrect clean and rebuild behavior.
+﻿C:\Program Files\Microsoft Visual Studio\2022\Community\MSBuild\Microsoft\VC\v170\Microsoft.CppBuild.targets(531,5): warning MSB8028: The intermediate directory (x64\Debug\) contains files shared from another project (Project3.vcxproj).  This can lead to incorrect clean and rebuild behavior.
   GameEngine.cpp
-C:\Users\752\Documents\GitHub\2324-space-sprint-project-pssi-studio\Project3\GameEngine.h(62,102): warning C4244: 'argument': conversion from 'unsigned int' to 'T', possible loss of data
-C:\Users\752\Documents\GitHub\2324-space-sprint-project-pssi-studio\Project3\GameEngine.h(62,102): warning C4244:         with
-C:\Users\752\Documents\GitHub\2324-space-sprint-project-pssi-studio\Project3\GameEngine.h(62,102): warning C4244:         [
-C:\Users\752\Documents\GitHub\2324-space-sprint-project-pssi-studio\Project3\GameEngine.h(62,102): warning C4244:             T=float
-C:\Users\752\Documents\GitHub\2324-space-sprint-project-pssi-studio\Project3\GameEngine.h(62,102): warning C4244:         ]
-  (compiling source file 'GameEngine.cpp')
-  
-C:\Users\752\Documents\GitHub\2324-space-sprint-project-pssi-studio\Project3\GameEngine.cpp(396,59): warning C4244: 'argument': conversion from 'unsigned int' to 'T', possible loss of data
-C:\Users\752\Documents\GitHub\2324-space-sprint-project-pssi-studio\Project3\GameEngine.cpp(396,59): warning C4244:         with
-C:\Users\752\Documents\GitHub\2324-space-sprint-project-pssi-studio\Project3\GameEngine.cpp(396,59): warning C4244:         [
-C:\Users\752\Documents\GitHub\2324-space-sprint-project-pssi-studio\Project3\GameEngine.cpp(396,59): warning C4244:             T=float
-C:\Users\752\Documents\GitHub\2324-space-sprint-project-pssi-studio\Project3\GameEngine.cpp(396,59): warning C4244:         ]
-C:\Users\752\Documents\GitHub\2324-space-sprint-project-pssi-studio\Project3\GameEngine.cpp(396,44): warning C4244: 'argument': conversion from 'unsigned int' to 'T', possible loss of data
-C:\Users\752\Documents\GitHub\2324-space-sprint-project-pssi-studio\Project3\GameEngine.cpp(396,44): warning C4244:         with
-C:\Users\752\Documents\GitHub\2324-space-sprint-project-pssi-studio\Project3\GameEngine.cpp(396,44): warning C4244:         [
-C:\Users\752\Documents\GitHub\2324-space-sprint-project-pssi-studio\Project3\GameEngine.cpp(396,44): warning C4244:             T=float
-C:\Users\752\Documents\GitHub\2324-space-sprint-project-pssi-studio\Project3\GameEngine.cpp(396,44): warning C4244:         ]
-C:\Users\752\Documents\GitHub\2324-space-sprint-project-pssi-studio\Project3\GameEngine.cpp(402,42): warning C4244: 'argument': conversion from 'unsigned int' to 'float', possible loss of data
-C:\Users\752\Documents\GitHub\2324-space-sprint-project-pssi-studio\Project3\GameEngine.cpp(407,89): warning C4244: 'argument': conversion from 'unsigned int' to 'T', possible loss of data
-C:\Users\752\Documents\GitHub\2324-space-sprint-project-pssi-studio\Project3\GameEngine.cpp(407,89): warning C4244:         with
-C:\Users\752\Documents\GitHub\2324-space-sprint-project-pssi-studio\Project3\GameEngine.cpp(407,89): warning C4244:         [
-C:\Users\752\Documents\GitHub\2324-space-sprint-project-pssi-studio\Project3\GameEngine.cpp(407,89): warning C4244:             T=float
-C:\Users\752\Documents\GitHub\2324-space-sprint-project-pssi-studio\Project3\GameEngine.cpp(407,89): warning C4244:         ]
-C:\Users\752\Documents\GitHub\2324-space-sprint-project-pssi-studio\Project3\GameEngine.cpp(415,51): warning C4244: 'argument': conversion from 'unsigned int' to 'T', possible loss of data
-C:\Users\752\Documents\GitHub\2324-space-sprint-project-pssi-studio\Project3\GameEngine.cpp(415,51): warning C4244:         with
-C:\Users\752\Documents\GitHub\2324-space-sprint-project-pssi-studio\Project3\GameEngine.cpp(415,51): warning C4244:         [
-C:\Users\752\Documents\GitHub\2324-space-sprint-project-pssi-studio\Project3\GameEngine.cpp(415,51): warning C4244:             T=float
-C:\Users\752\Documents\GitHub\2324-space-sprint-project-pssi-studio\Project3\GameEngine.cpp(415,51): warning C4244:         ]
-C:\Users\752\Documents\GitHub\2324-space-sprint-project-pssi-studio\Project3\GameEngine.cpp(415,38): warning C4244: 'argument': conversion from 'unsigned int' to 'T', possible loss of data
-C:\Users\752\Documents\GitHub\2324-space-sprint-project-pssi-studio\Project3\GameEngine.cpp(415,38): warning C4244:         with
-C:\Users\752\Documents\GitHub\2324-space-sprint-project-pssi-studio\Project3\GameEngine.cpp(415,38): warning C4244:         [
-C:\Users\752\Documents\GitHub\2324-space-sprint-project-pssi-studio\Project3\GameEngine.cpp(415,38): warning C4244:             T=float
-C:\Users\752\Documents\GitHub\2324-space-sprint-project-pssi-studio\Project3\GameEngine.cpp(415,38): warning C4244:         ]
-C:\Users\752\Documents\GitHub\2324-space-sprint-project-pssi-studio\Project3\GameEngine.cpp(418,51): warning C4244: 'argument': conversion from 'unsigned int' to 'T', possible loss of data
-C:\Users\752\Documents\GitHub\2324-space-sprint-project-pssi-studio\Project3\GameEngine.cpp(418,51): warning C4244:         with
-C:\Users\752\Documents\GitHub\2324-space-sprint-project-pssi-studio\Project3\GameEngine.cpp(418,51): warning C4244:         [
-C:\Users\752\Documents\GitHub\2324-space-sprint-project-pssi-studio\Project3\GameEngine.cpp(418,51): warning C4244:             T=float
-C:\Users\752\Documents\GitHub\2324-space-sprint-project-pssi-studio\Project3\GameEngine.cpp(418,51): warning C4244:         ]
-C:\Users\752\Documents\GitHub\2324-space-sprint-project-pssi-studio\Project3\GameEngine.cpp(418,38): warning C4244: 'argument': conversion from 'unsigned int' to 'T', possible loss of data
-C:\Users\752\Documents\GitHub\2324-space-sprint-project-pssi-studio\Project3\GameEngine.cpp(418,38): warning C4244:         with
-C:\Users\752\Documents\GitHub\2324-space-sprint-project-pssi-studio\Project3\GameEngine.cpp(418,38): warning C4244:         [
-C:\Users\752\Documents\GitHub\2324-space-sprint-project-pssi-studio\Project3\GameEngine.cpp(418,38): warning C4244:             T=float
-C:\Users\752\Documents\GitHub\2324-space-sprint-project-pssi-studio\Project3\GameEngine.cpp(418,38): warning C4244:         ]
-C:\Users\752\Documents\GitHub\2324-space-sprint-project-pssi-studio\Project3\GameEngine.cpp(419,29): warning C4244: 'argument': conversion from 'unsigned int' to 'float', possible loss of data
-C:\Users\752\Documents\GitHub\2324-space-sprint-project-pssi-studio\Project3\GameEngine.cpp(528,95): warning C4244: 'argument': conversion from 'double' to 'float', possible loss of data
-C:\Users\752\Documents\GitHub\2324-space-sprint-project-pssi-studio\Project3\GameEngine.cpp(540,35): warning C4244: 'argument': conversion from 'unsigned int' to 'float', possible loss of data
-C:\Users\752\Documents\GitHub\2324-space-sprint-project-pssi-studio\Project3\GameEngine.cpp(626,85): warning C4244: 'argument': conversion from 'unsigned int' to 'float', possible loss of data
-  Project3.vcxproj -> C:\Users\752\Documents\GitHub\2324-space-sprint-project-pssi-studio\x64\Debug\PSSI_SpaceAdventure.exe
+C:\Users\SNKalamerov22\Documents\2324-space-sprint-project-pssi-studio\Project3\GameEngine.h(7,10): fatal  error C1083: Cannot open include file: 'SFML/Graphics.hpp': No such file or directory
+  Main.cpp
+C:\Users\SNKalamerov22\Documents\2324-space-sprint-project-pssi-studio\Project3\GameEngine.h(7,10): fatal  error C1083: Cannot open include file: 'SFML/Graphics.hpp': No such file or directory
+  Button.cpp
+C:\Users\SNKalamerov22\Documents\2324-space-sprint-project-pssi-studio\Project3\Button.h(7,10): fatal  error C1083: Cannot open include file: 'SFML/Graphics.hpp': No such file or directory
+  Generating Code...
