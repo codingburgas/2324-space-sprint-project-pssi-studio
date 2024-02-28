@@ -78,10 +78,14 @@ private:
     sf::RectangleShape popupBackground;
     std::vector<sf::Text> crewOptions;
     sf::Font font;
+    sf::Texture* currentSpaceShipTexture;
 
-    std::vector<std::string> roles = { "Space Ship", "Captain", "Repairman", "Navigator", "Engineer" };
-    std::map<std::string, std::vector<std::string>> crewMembers;
     bool showCongratulationsScreen = false;
+
+    sf::Texture meteorTexture1;
+    sf::Texture meteorTexture2;
+    sf::Texture meteorTexture3;
+
 
 
     // These are somewhat like an event value mainly used for loading and unloading elements that should be loaded again!
@@ -116,7 +120,6 @@ private:
 
     bool startingPhase = true;
     float startingPhaseTimer = 0.0f;
-
 
     // Calls the main functions
     void processEvents();
