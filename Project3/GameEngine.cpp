@@ -562,7 +562,7 @@ void GameEngine::updateMeteors(float deltaTime) {
 
 void GameEngine::checkCollisions() {
     // Used for detecting the colissions with the meteors! Also the Shrink factor makes it easier for the player!
-    float shrinkFactor = 2f;
+    float shrinkFactor = 0.1f;
     for (auto& meteor : meteors) {
         sf::FloatRect reducedSpaceShipBounds = spaceShip.getGlobalBounds();
         reducedSpaceShipBounds.left += reducedSpaceShipBounds.width * (1 - shrinkFactor) / 2;
